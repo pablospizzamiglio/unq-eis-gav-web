@@ -1,7 +1,9 @@
-import API from "../../services/API";
 import { useEffect, useState } from "react";
+import API from "../../services/API";
+import NotFound from "../NotFound";
+import Spinner from "../Spinner";
 
-const Acoordion = () => {
+const Acordion = () => {
   const [assistances, setAssistances] = useState(null);
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,11 +21,19 @@ const Acoordion = () => {
       });
   }, []);
 
+  if (isLoading) {
+    return <Spinner fullscreen={false} />;
+  }
+
+  if (error) {
+    return <NotFound />;
+  }
+
   return (
-    <div className="accordion" id="accordionExample">
-      {assistances.result.map((user, i) => {
+    <div className="accordion" id="assistance-accordion">
+      {assistances.result.map((assistance, i) => {
         return (
-          <div className="accordion-item">
+          <div className="accordion-item" key={i}>
             <h2 className="accordion-header" id={i}>
               <button
                 className="accordion-button"
@@ -33,20 +43,23 @@ const Acoordion = () => {
                 aria-expanded="true"
                 aria-controls={`collapse${i}`}
               >
-                {user.id}
+                {assistance.detail}
               </button>
             </h2>
             <div
               id={`collapse${i}`}
               className="accordion-collapse collapse show"
               aria-labelledby={i}
-              data-bs-parent="#accordionExample"
+              data-bs-parent="#assistance-accordion"
             >
               <div className="accordion-body">
-                <h4>Kind: {user.kind}</h4>
-                <h4>Detail: {user.detail}</h4>
-                <h4>CostPerKm: ${user.costPerKm}</h4>
-                <h4>User: {user.assistant.id}</h4>
+                <h4>Kind: {assistance.kind}</h4>
+                <h4>Detail: {assistance.detail}</h4>
+                <h4>CostPerKm: ${assistance.costPerKm}</h4>
+                <h4>
+                  User: {assistance.assistant.firstName}{" "}
+                  {assistance.assistant.lastName}
+                </h4>
               </div>
             </div>
           </div>
@@ -56,4 +69,4 @@ const Acoordion = () => {
   );
 };
 
-export default Acoordion;
+export default Acordion;
