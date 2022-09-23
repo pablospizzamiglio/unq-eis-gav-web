@@ -1,11 +1,11 @@
-import Acordion from "./Accordion";
+import AssistanceAccordion from "../AssistanceAccordion/AssistanceAccordion";
 
 const Home = () => {
   return (
     <div className="container">
       <div className="col">
         <div className="row">
-          <Acordion />
+          <AssistanceAccordion />
         </div>
       </div>
     </div>

@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import API from "../../services/API";
 import LoadingError from "../LoadingError";
 import Spinner from "../Spinner";
+import "./AssistanceAccordion.css";
 
-const Acordion = () => {
+const AssistanceAccordion = () => {
   const [assistances, setAssistances] = useState(null);
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -94,7 +95,9 @@ const Acordion = () => {
                     aria-labelledby={i}
                   >
                     <div className="accordion-body">
-                      <h4>Kind: {assistance.kind}</h4>
+                      <h4 className="capitalize">
+                        Kind: {assistance.kind.toLowerCase()}
+                      </h4>
                       <h4>Fixed Cost: ${assistance.fixedCost.toFixed(2)}</h4>
                       <h4>Cost Per Km: ${assistance.costPerKm.toFixed(2)}</h4>
                       <h4>
@@ -115,4 +118,4 @@ const Acordion = () => {
   );
 };
 
-export default Acordion;
+export default AssistanceAccordion;
