@@ -86,9 +86,7 @@ const Acordion = () => {
                       data-bs-target={`#collapse${i}`}
                       aria-expanded="false"
                       aria-controls={`collapse${i}`}
-                    >
-                      {assistance.detail}
-                    </button>
+                    ></button>
                   </h2>
                   <div
                     id={`collapse${i}`}
@@ -97,7 +95,8 @@ const Acordion = () => {
                   >
                     <div className="accordion-body">
                       <h4>Kind: {assistance.kind}</h4>
-                      <h4>CostPerKm: ${assistance.costPerKm}</h4>
+                      <h4>Fixed Cost: ${assistance.fixedCost.toFixed(2)}</h4>
+                      <h4>Cost Per Km: ${assistance.costPerKm.toFixed(2)}</h4>
                       <h4>
                         User: {assistance.assistant.firstName}{" "}
                         {assistance.assistant.lastName}
