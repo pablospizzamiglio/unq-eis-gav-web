@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../../services/API";
+import GenericModal from "../GenericModal";
 import LoadingError from "../LoadingError";
 import Spinner from "../Spinner";
 import "./AssistanceAccordion.css";
@@ -19,9 +20,32 @@ const AssistanceAccordion = () => {
   const [selectedKindFilterOption, setSelectedKindFilterOption] = useState(
     kindFilterOptions[0].value
   );
+  const [selectedAssistance, setSelectedAssistance] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [street, setStreet] = useState("");
+  const [betweenStreets, setBetweenStreets] = useState("");
+  const [city, setCity] = useState("");
+  const [province, setProvince] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   const handleKindFilterChange = (event) => {
     setSelectedKindFilterOption(event.target.value);
+  };
+
+  const loadModal = (assistance) => {
+    setSelectedAssistance(assistance);
+  };
+
+  const requestAssistance = (event) => {
+    console.log("Requesting assistance...");
+    console.log(JSON.stringify(selectedAssistance));
+    event.preventDefault();
+    setIsSubmitting(true);
+    // TODO: hit API
+  };
+
+  const resetAssistanceRequestForm = () => {
+    setSelectedAssistance(null);
   };
 
   useEffect(() => {
@@ -104,6 +128,16 @@ const AssistanceAccordion = () => {
                         User: {assistance.assistant.firstName}{" "}
                         {assistance.assistant.lastName}
                       </h4>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#request-assistance-modal"
+                        onClick={() => loadModal(assistance)}
+                      >
+                        <i className="bi bi-plus-lg" aria-hidden="true"></i>
+                        Request Assistance
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -114,6 +148,91 @@ const AssistanceAccordion = () => {
       )}
 
       {error && <LoadingError />}
+
+      <GenericModal
+        title="Confirm Assistance Request"
+        target={"request-assistance-modal"}
+        center={false}
+        disableButtons={isSubmitting}
+        onConfirm={requestAssistance}
+        onClose={resetAssistanceRequestForm}
+      >
+        <fieldset disabled={isSubmitting}>
+          <legend>Location and Contact Information</legend>
+          <div className="row g-1">
+            <div className="col-12">
+              <label htmlFor="street" className="form-label">
+                Street
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="street"
+                required
+                value={street}
+                onChange={(e) => setStreet(e.target.value)}
+              />
+            </div>
+
+            <div className="col-12">
+              <label htmlFor="betweent-streets" className="form-label">
+                Between Streets
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="betweent-streets"
+                required
+                value={betweenStreets}
+                onChange={(e) => setBetweenStreets(e.target.value)}
+              />
+            </div>
+
+            <div className="col-md-6">
+              <label htmlFor="city" className="form-label">
+                City
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="city"
+                required
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              />
+            </div>
+
+            <div className="col-md-6">
+              <label htmlFor="province" className="form-label">
+                Province
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="province"
+                required
+                value={province}
+                onChange={(e) => setProvince(e.target.value)}
+              />
+            </div>
+
+            <div className="col-12">
+              <label htmlFor="phone-number" className="form-label">
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                className="form-control"
+                id="phone-number"
+                required
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                pattern="[0-9]{10}"
+              />
+            </div>
+          </div>
+        </fieldset>
+      </GenericModal>
     </div>
   );
 };
