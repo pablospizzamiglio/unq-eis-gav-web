@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import API from "../../services/API";
 import LoadingError from "../LoadingError";
+import Modal from "../Modal";
 import Spinner from "../Spinner";
 import "./AssistanceAccordion.css";
 
@@ -19,9 +20,64 @@ const AssistanceAccordion = () => {
   const [selectedKindFilterOption, setSelectedKindFilterOption] = useState(
     kindFilterOptions[0].value
   );
+  const [showRequestAssistanceModal, setShowRequestAssistanceModal] =
+    useState(false);
+  const [selectedAssistance, setSelectedAssistance] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [street, setStreet] = useState("");
+  const [betweenStreets, setBetweenStreets] = useState("");
+  const [city, setCity] = useState("");
+  const [province, setProvince] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [formErrors, setFormErrors] = useState("");
 
   const handleKindFilterChange = (event) => {
     setSelectedKindFilterOption(event.target.value);
+  };
+
+  const resetAssistanceRequestForm = () => {
+    setSelectedAssistance(null);
+    setStreet("");
+    setBetweenStreets("");
+    setCity("");
+    setProvince("");
+    setPhoneNumber("");
+  };
+
+  const openRequestAssistanceModal = (assistance) => {
+    setSelectedAssistance(assistance);
+    setShowRequestAssistanceModal(true);
+  };
+
+  const closeRequestAssistanceModal = () => {
+    setShowRequestAssistanceModal(false);
+    resetAssistanceRequestForm();
+  };
+
+  const requestAssistance = (event) => {
+    event.preventDefault();
+
+    setIsSubmitting(true);
+    setFormErrors("");
+
+    API.createAssistanceOrder(
+      selectedAssistance.id,
+      street,
+      betweenStreets,
+      city,
+      province,
+      phoneNumber
+    )
+      .then((response) => {
+        resetAssistanceRequestForm();
+        setShowRequestAssistanceModal(false);
+      })
+      .catch((error) => {
+        setFormErrors(error.response.data.message);
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
   useEffect(() => {
@@ -104,6 +160,17 @@ const AssistanceAccordion = () => {
                         User: {assistance.assistant.firstName}{" "}
                         {assistance.assistant.lastName}
                       </h4>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => openRequestAssistanceModal(assistance)}
+                      >
+                        <i
+                          className="bi bi-truck-flatbed"
+                          aria-hidden="true"
+                        ></i>
+                        {" Request Assistance"}
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -114,6 +181,99 @@ const AssistanceAccordion = () => {
       )}
 
       {error && <LoadingError />}
+
+      <Modal
+        title="Confirm Assistance Request"
+        show={showRequestAssistanceModal}
+        onConfirm={requestAssistance}
+        onClose={closeRequestAssistanceModal}
+      >
+        <fieldset disabled={isSubmitting}>
+          <legend>Location and Contact Information</legend>
+          <div className="row g-1">
+            <div className="col-md-12">
+              <label htmlFor="street" className="form-label">
+                Street
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="street"
+                required={true}
+                value={street}
+                onChange={(e) => setStreet(e.target.value)}
+              />
+            </div>
+
+            <div className="col-md-12">
+              <label htmlFor="betweent-streets" className="form-label">
+                Between Streets
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="betweent-streets"
+                required={true}
+                value={betweenStreets}
+                onChange={(e) => setBetweenStreets(e.target.value)}
+              />
+            </div>
+
+            <div className="col-md-6">
+              <label htmlFor="city" className="form-label">
+                City
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="city"
+                required={true}
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              />
+            </div>
+
+            <div className="col-md-6">
+              <label htmlFor="province" className="form-label">
+                Province
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="province"
+                required={true}
+                value={province}
+                onChange={(e) => setProvince(e.target.value)}
+              />
+            </div>
+
+            <div className="col-md-12">
+              <label htmlFor="phone-number" className="form-label">
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                className="form-control"
+                id="phone-number"
+                required={true}
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                pattern="[0-9]{10}"
+                minLength={10}
+                maxLength={10}
+              />
+            </div>
+
+            {formErrors && (
+              <div className="col-md-12 pt-2">
+                <div className="alert alert-danger" role="alert">
+                  {formErrors}
+                </div>
+              </div>
+            )}
+          </div>
+        </fieldset>
+      </Modal>
     </div>
   );
 };
