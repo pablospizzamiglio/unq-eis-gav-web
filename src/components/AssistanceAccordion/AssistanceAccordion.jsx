@@ -69,7 +69,6 @@ const AssistanceAccordion = () => {
 
     API.createAssistanceOrder(selectedAssistance.id, address, phoneNumber)
       .then((response) => {
-        console.log(response);
         resetAssistanceRequestForm();
         setShowRequestAssistanceModal(false);
       })
