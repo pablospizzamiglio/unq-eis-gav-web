@@ -49,7 +49,7 @@ const AssistanceAccordion = () => {
   };
 
   useEffect(() => {
-    API.getAssistances()
+    API.getAssistances(selectedKindFilterOption)
       .then((response) => {
         setAssistances(response.data);
       })
