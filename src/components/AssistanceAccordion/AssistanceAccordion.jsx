@@ -60,14 +60,14 @@ const AssistanceAccordion = () => {
     setIsSubmitting(true);
     setFormErrors("");
 
-    const address = {
+    API.createAssistanceOrder(
+      selectedAssistance.id,
       street,
       betweenStreets,
       city,
       province,
-    };
-
-    API.createAssistanceOrder(selectedAssistance.id, address, phoneNumber)
+      phoneNumber
+    )
       .then((response) => {
         resetAssistanceRequestForm();
         setShowRequestAssistanceModal(false);
