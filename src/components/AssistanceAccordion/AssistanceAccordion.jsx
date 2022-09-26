@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import API from "../../services/API";
-import GenericModal from "../GenericModal";
 import LoadingError from "../LoadingError";
+import Modal from "../Modal";
 import Spinner from "../Spinner";
 import "./AssistanceAccordion.css";
 
@@ -20,6 +20,8 @@ const AssistanceAccordion = () => {
   const [selectedKindFilterOption, setSelectedKindFilterOption] = useState(
     kindFilterOptions[0].value
   );
+  const [showRequestAssistanceModal, setShowRequestAssistanceModal] =
+    useState(false);
   const [selectedAssistance, setSelectedAssistance] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [street, setStreet] = useState("");
@@ -33,17 +35,23 @@ const AssistanceAccordion = () => {
     setSelectedKindFilterOption(event.target.value);
   };
 
-  const loadModal = (assistance) => {
-    setSelectedAssistance(assistance);
-  };
-
-  const resetForm = () => {
+  const resetAssistanceRequestForm = () => {
     setSelectedAssistance(null);
     setStreet("");
     setBetweenStreets("");
     setCity("");
     setProvince("");
     setPhoneNumber("");
+  };
+
+  const openRequestAssistanceModal = (assistance) => {
+    setSelectedAssistance(assistance);
+    setShowRequestAssistanceModal(true);
+  };
+
+  const closeRequestAssistanceModal = () => {
+    setShowRequestAssistanceModal(false);
+    resetAssistanceRequestForm();
   };
 
   const requestAssistance = (event) => {
@@ -61,8 +69,9 @@ const AssistanceAccordion = () => {
 
     API.createAssistanceOrder(selectedAssistance.id, address, phoneNumber)
       .then((response) => {
-        resetForm();
-        // hideModal();
+        console.log(response);
+        resetAssistanceRequestForm();
+        setShowRequestAssistanceModal(false);
       })
       .catch((error) => {
         setFormErrors(error.response.data.message);
@@ -70,10 +79,6 @@ const AssistanceAccordion = () => {
       .finally(() => {
         setIsSubmitting(false);
       });
-  };
-
-  const resetAssistanceRequestForm = () => {
-    setSelectedAssistance(null);
   };
 
   useEffect(() => {
@@ -159,9 +164,7 @@ const AssistanceAccordion = () => {
                       <button
                         type="button"
                         className="btn btn-primary"
-                        data-bs-toggle="modal"
-                        data-bs-target="#request-assistance-modal"
-                        onClick={() => loadModal(assistance)}
+                        onClick={() => openRequestAssistanceModal(assistance)}
                       >
                         <i
                           className="bi bi-truck-flatbed"
@@ -180,13 +183,11 @@ const AssistanceAccordion = () => {
 
       {error && <LoadingError />}
 
-      <GenericModal
+      <Modal
         title="Confirm Assistance Request"
-        target={"request-assistance-modal"}
-        center={false}
-        disableButtons={isSubmitting}
+        show={showRequestAssistanceModal}
         onConfirm={requestAssistance}
-        onClose={resetAssistanceRequestForm}
+        onClose={closeRequestAssistanceModal}
       >
         <fieldset disabled={isSubmitting}>
           <legend>Location and Contact Information</legend>
@@ -273,7 +274,7 @@ const AssistanceAccordion = () => {
             )}
           </div>
         </fieldset>
-      </GenericModal>
+      </Modal>
     </div>
   );
 };
