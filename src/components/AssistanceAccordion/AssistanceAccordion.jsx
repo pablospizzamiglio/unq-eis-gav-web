@@ -47,8 +47,6 @@ const AssistanceAccordion = () => {
   };
 
   const requestAssistance = (event) => {
-    console.log("Requesting assistance...");
-    console.log(JSON.stringify(selectedAssistance));
     event.preventDefault();
 
     setIsSubmitting(true);
@@ -165,8 +163,8 @@ const AssistanceAccordion = () => {
                         data-bs-target="#request-assistance-modal"
                         onClick={() => loadModal(assistance)}
                       >
-                        <i className="bi bi-plus-lg" aria-hidden="true"></i>
-                        Request Assistance
+                        <i class="bi bi-truck-flatbed" aria-hidden="true"></i>
+                        {" Request Assistance"}
                       </button>
                     </div>
                   </div>
