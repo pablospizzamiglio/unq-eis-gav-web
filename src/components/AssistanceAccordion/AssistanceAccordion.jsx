@@ -163,7 +163,10 @@ const AssistanceAccordion = () => {
                         data-bs-target="#request-assistance-modal"
                         onClick={() => loadModal(assistance)}
                       >
-                        <i class="bi bi-truck-flatbed" aria-hidden="true"></i>
+                        <i
+                          className="bi bi-truck-flatbed"
+                          aria-hidden="true"
+                        ></i>
                         {" Request Assistance"}
                       </button>
                     </div>
