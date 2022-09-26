@@ -10,6 +10,8 @@ const API = {
       return axios.get(`${baseURL}/assistances?kind=${kind}`);
     }
   },
+  createAssistanceOrder: (assistanceId, address, phoneNumber) =>
+    axios.post(`${baseURL}/order`, { assistanceId, address, phoneNumber }),
 };
 
 export default API;

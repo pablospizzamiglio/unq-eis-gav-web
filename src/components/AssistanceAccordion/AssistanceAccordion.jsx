@@ -27,6 +27,7 @@ const AssistanceAccordion = () => {
   const [city, setCity] = useState("");
   const [province, setProvince] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [formErrors, setFormErrors] = useState("");
 
   const handleKindFilterChange = (event) => {
     setSelectedKindFilterOption(event.target.value);
@@ -36,12 +37,41 @@ const AssistanceAccordion = () => {
     setSelectedAssistance(assistance);
   };
 
+  const resetForm = () => {
+    setSelectedAssistance(null);
+    setStreet("");
+    setBetweenStreets("");
+    setCity("");
+    setProvince("");
+    setPhoneNumber("");
+  };
+
   const requestAssistance = (event) => {
     console.log("Requesting assistance...");
     console.log(JSON.stringify(selectedAssistance));
     event.preventDefault();
+
     setIsSubmitting(true);
-    // TODO: hit API
+    setFormErrors("");
+
+    const address = {
+      street,
+      betweenStreets,
+      city,
+      province,
+    };
+
+    API.createAssistanceOrder(selectedAssistance.id, address, phoneNumber)
+      .then((response) => {
+        resetForm();
+        // hideModal();
+      })
+      .catch((error) => {
+        setFormErrors(error.response.data.message);
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
   const resetAssistanceRequestForm = () => {
@@ -160,7 +190,7 @@ const AssistanceAccordion = () => {
         <fieldset disabled={isSubmitting}>
           <legend>Location and Contact Information</legend>
           <div className="row g-1">
-            <div className="col-12">
+            <div className="col-md-12">
               <label htmlFor="street" className="form-label">
                 Street
               </label>
@@ -168,13 +198,13 @@ const AssistanceAccordion = () => {
                 type="text"
                 className="form-control"
                 id="street"
-                required
+                required={true}
                 value={street}
                 onChange={(e) => setStreet(e.target.value)}
               />
             </div>
 
-            <div className="col-12">
+            <div className="col-md-12">
               <label htmlFor="betweent-streets" className="form-label">
                 Between Streets
               </label>
@@ -182,7 +212,7 @@ const AssistanceAccordion = () => {
                 type="text"
                 className="form-control"
                 id="betweent-streets"
-                required
+                required={true}
                 value={betweenStreets}
                 onChange={(e) => setBetweenStreets(e.target.value)}
               />
@@ -196,7 +226,7 @@ const AssistanceAccordion = () => {
                 type="text"
                 className="form-control"
                 id="city"
-                required
+                required={true}
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
               />
@@ -210,13 +240,13 @@ const AssistanceAccordion = () => {
                 type="text"
                 className="form-control"
                 id="province"
-                required
+                required={true}
                 value={province}
                 onChange={(e) => setProvince(e.target.value)}
               />
             </div>
 
-            <div className="col-12">
+            <div className="col-md-12">
               <label htmlFor="phone-number" className="form-label">
                 Phone Number
               </label>
@@ -224,12 +254,22 @@ const AssistanceAccordion = () => {
                 type="tel"
                 className="form-control"
                 id="phone-number"
-                required
+                required={true}
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 pattern="[0-9]{10}"
+                minLength={10}
+                maxLength={10}
               />
             </div>
+
+            {formErrors && (
+              <div className="col-md-12 pt-2">
+                <div className="alert alert-danger" role="alert">
+                  {formErrors}
+                </div>
+              </div>
+            )}
           </div>
         </fieldset>
       </GenericModal>
