@@ -66,7 +66,11 @@ const AssistanceAccordion = () => {
       betweenStreets,
       city,
       province,
-      phoneNumber
+      phoneNumber,
+      selectedAssistance.costPerKm,
+      selectedAssistance.fixedCost,
+      selectedAssistance.firstName,
+      selectedAssistance.phoneNumber
     )
       .then((response) => {
         resetAssistanceRequestForm();
@@ -189,6 +193,45 @@ const AssistanceAccordion = () => {
         onClose={closeRequestAssistanceModal}
       >
         <fieldset disabled={isSubmitting}>
+          
+          <legend>Service Information</legend>
+          <div className="row g-1">
+            <div className="col-md-6">
+              <label htmlFor="name" className="form-label">
+                Name
+              </label>
+              <h5>
+              {selectedAssistance.assistant.firstName}
+              </h5>
+            </div>
+
+            <div className="col-md-6">
+              <label htmlFor="phone" className="form-label">
+                Phone Number
+              </label>
+              <h5>
+              {selectedAssistance.assistant.telephoneNumber}
+              </h5>
+            </div>
+            
+            <div className="col-md-6">
+              <label htmlFor="coste" className="form-label">
+                Coste Per Km
+              </label>
+              <h5>
+              {selectedAssistance.costPerKm.toFixed(2)}
+              </h5>
+            </div>
+
+            <div className="col-md-6">
+              <label htmlFor="coste" className="form-label">
+                Coste Fixed
+              </label>
+              <h5>
+              {selectedAssistance.fixedCost.toFixed(2)}
+              </h5> 
+            </div>
+          </div>
           <legend>Location and Contact Information</legend>
           <div className="row g-1">
             <div className="col-md-12">
@@ -263,6 +306,8 @@ const AssistanceAccordion = () => {
                 maxLength={10}
               />
             </div>
+
+
 
             {formErrors && (
               <div className="col-md-12 pt-2">
