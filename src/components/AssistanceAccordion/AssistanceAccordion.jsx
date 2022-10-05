@@ -59,7 +59,7 @@ const AssistanceAccordion = () => {
     );
     setPhoneNumberAssistance(assistance.assistant.telephoneNumber);
     setFixedCostAssistance(assistance.fixedCost.toFixed(2));
-    setCostPerKmAssistance(assistance.costPerKm);
+    setCostPerKmAssistance(assistance.costPerKm.toFixed(2));
     setShowRequestAssistanceModal(true);
   };
 
