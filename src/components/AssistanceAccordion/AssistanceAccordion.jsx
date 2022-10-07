@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import API from "../../services/API";
 import LoadingError from "../LoadingError";
 import Modal from "../Modal";
+import PopUp from "../PopUp/PopUp";
 import Spinner from "../Spinner";
 import "./AssistanceAccordion.css";
 
@@ -9,6 +10,7 @@ const AssistanceAccordion = () => {
   const [assistances, setAssistances] = useState(null);
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [popUpConfirmation, setPopUpConfirmation] = useState(false);
   const kindFilterOptions = [
     { value: "", text: "--Choose assistance kind--" },
     { value: "SMALL", text: "Small" },
@@ -52,8 +54,13 @@ const AssistanceAccordion = () => {
     setPhoneNumber("");
   };
 
+  setTimeout(() => {
+    setPopUpConfirmation(false);
+  }, 10000);
+
   const openRequestAssistanceModal = (assistance) => {
     setSelectedAssistance(assistance);
+    setPopUpConfirmation(false);
     setNameAssistance(
       `${assistance.assistant.firstName} ${assistance.assistant.lastName}`
     );
@@ -83,10 +90,12 @@ const AssistanceAccordion = () => {
       phoneNumber
     )
       .then((response) => {
+        setPopUpConfirmation(true);
         resetAssistanceRequestForm();
         setShowRequestAssistanceModal(false);
       })
       .catch((error) => {
+        setPopUpConfirmation(false);
         setFormErrors(error.response.data.message);
       })
       .finally(() => {
@@ -195,6 +204,9 @@ const AssistanceAccordion = () => {
       )}
 
       {error && <LoadingError />}
+      {popUpConfirmation && (
+        <PopUp role="alert" text="Assistance order created successfully " />
+      )}
 
       <Modal
         title="Confirm Assistance Request"
