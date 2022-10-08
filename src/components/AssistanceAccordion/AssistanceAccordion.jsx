@@ -23,6 +23,10 @@ const AssistanceAccordion = () => {
   const [showRequestAssistanceModal, setShowRequestAssistanceModal] =
     useState(false);
   const [selectedAssistance, setSelectedAssistance] = useState(null);
+  const [nameAssistance, setNameAssistance] = useState("");
+  const [phoneNumberAssistance, setPhoneNumberAssistance] = useState("");
+  const [fixedCostAssistance, setFixedCostAssistance] = useState("");
+  const [costPerKmAssistance, setCostPerKmAssistance] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [street, setStreet] = useState("");
   const [betweenStreets, setBetweenStreets] = useState("");
@@ -37,6 +41,10 @@ const AssistanceAccordion = () => {
 
   const resetAssistanceRequestForm = () => {
     setSelectedAssistance(null);
+    setNameAssistance("");
+    setPhoneNumberAssistance("");
+    setFixedCostAssistance("");
+    setCostPerKmAssistance("");
     setStreet("");
     setBetweenStreets("");
     setCity("");
@@ -46,6 +54,12 @@ const AssistanceAccordion = () => {
 
   const openRequestAssistanceModal = (assistance) => {
     setSelectedAssistance(assistance);
+    setNameAssistance(
+      `${assistance.assistant.firstName} ${assistance.assistant.lastName}`
+    );
+    setPhoneNumberAssistance(assistance.assistant.telephoneNumber);
+    setFixedCostAssistance(assistance.fixedCost.toFixed(2));
+    setCostPerKmAssistance(assistance.costPerKm.toFixed(2));
     setShowRequestAssistanceModal(true);
   };
 
@@ -189,6 +203,33 @@ const AssistanceAccordion = () => {
         onClose={closeRequestAssistanceModal}
       >
         <fieldset disabled={isSubmitting}>
+          <legend>Service Information</legend>
+          <div className="row g-1">
+            <div className="col-md-6">
+              <label htmlFor="name" className="form-label">
+                <h5>Assistant: {nameAssistance}</h5>
+              </label>
+            </div>
+
+            <div className="col-md-6">
+              <label htmlFor="phoneNumber" className="form-label">
+                <h5>Phone number: {phoneNumberAssistance}</h5>
+              </label>
+            </div>
+
+            <div className="col-md-6">
+              <label htmlFor="fixedCost" className="form-label">
+                <h5>Fixed Cost: ${fixedCostAssistance}</h5>
+              </label>
+            </div>
+
+            <div className="col-md-6">
+              <label htmlFor="costPerKm" className="form-label">
+                <h5>Cost per Km: ${costPerKmAssistance}</h5>
+              </label>
+            </div>
+          </div>
+
           <legend>Location and Contact Information</legend>
           <div className="row g-1">
             <div className="col-md-12">
