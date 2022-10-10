@@ -13,13 +13,58 @@ const OrderUpdater = () => {
   const [formErrors, setFormErrors] = useState("");
   const [popUpConfirmation, setPopUpConfirmation] = useState(false);
 
+  const WeitingtTimeSelect = (status) => {
+    return status === "IN_PROGRESS" ? (
+      <div className="mb-3 row">
+        <label htmlFor="staticIdOrder" className="col-sm-2 col-form-label">
+          Approximate waiting time:
+        </label>
+        <div className="col-sm-3">
+          <div className="input-group mb-3">
+            <select
+              className="form-select"
+              id="imputHH"
+              value={hh}
+              onChange={(e) => setHh(e.target.value)}
+            >
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+            <label className="input-group-text" htmlFor="imputHH">
+              Hour
+            </label>
+            <select
+              className="form-select"
+              id="imputMM"
+              value={mm}
+              onChange={(e) => setMm(e.target.value)}
+            >
+              <option value="0">00</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="30">30</option>
+              <option value="40">40</option>
+              <option value="50">50</option>
+            </select>
+            <label className="input-group-text" htmlFor="imputHMM">
+              Minute
+            </label>
+          </div>
+        </div>
+      </div>
+    ) : (
+      <></>
+    );
+  };
+
   const acceptAssistance = () => {
     setStatus("IN_PROGRESS");
     setMail(
-      `mailto:me@cosas.com?subject=Order%20${idOrder}%20accepted%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20accepted.%20Please%20wait%20in%20the%20place%20until%20it%20arrives.%0A%0AGreetings.`
+      `mailto:me@cosas.com?subject=Order%20${idOrder}%20accepted%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20accepted.%20Please%20wait%20in%20the%20place%20until%20it%20arrives.%0AApproximate%20waiting%20time%3A%20${hh}:${mm}%20hs%0A%0AGreetings.%0A%0AGAV`
     );
-    setHh(document.getElementById("imputHH").value)
-    setMm(document.getElementById("imputMM").value)
   };
   const resetUpdateRequestForm = () => {
     setIdOrder("");
@@ -35,11 +80,11 @@ const OrderUpdater = () => {
     event.preventDefault();
     setPopUpConfirmation(false);
     setFormErrors("");
-    var totalTime = hh * 60 + mm
 
-    API.updateAssistanceOrder(idOrder, status, password, totalTime)
+    API.updateAssistanceOrder(idOrder, status, password)
       .then((response) => {
         setPopUpConfirmation(true);
+        console.log(hh);
         window.location.href = mail;
         resetUpdateRequestForm();
       })
@@ -51,7 +96,7 @@ const OrderUpdater = () => {
 
   return (
     <>
-    <h2>Order Updater</h2>
+      <h2>Order Updater</h2>
       <form className="formOrder" onSubmit={requestUpdateOrder}>
         {popUpConfirmation && <PopUp role="alert" text="Updated order " />}
         <div className="mb-3 row">
@@ -91,7 +136,8 @@ const OrderUpdater = () => {
           </div>
         </div>
 
-        {// combos para seleccioanr la hh:mm de tiempo de espera
+        {
+          // combos para seleccioanr la hh:mm de tiempo de espera
           WeitingtTimeSelect(status)
         }
 
@@ -125,36 +171,6 @@ const OrderUpdater = () => {
       </form>
     </>
   );
-};
-
-const WeitingtTimeSelect = (status) => {
-    return(status === "IN_PROGRESS"?
-            <div className="mb-3 row">
-              <label htmlFor="staticIdOrder" className="col-sm-2 col-form-label">
-                Approximate waiting time:
-              </label>
-              <div className="col-sm-3">
-                <div class="input-group mb-3">
-                  <select class="form-select" id="imputHH">
-                    <option value="0" selected>0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                  </select>
-                  <label class="input-group-text" for="imputHH">Hour</label>
-                  <select class="form-select" id="imputMM">
-                    <option value="0" selected>00</option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="30">30</option>
-                    <option value="40">40</option>
-                    <option value="50">50</option>
-                  </select>
-                  <label class="input-group-text" for="imputHMM">Minute</label>
-                </div>
-              </div>
-            </div>:<></>);
 };
 
 export default OrderUpdater;
