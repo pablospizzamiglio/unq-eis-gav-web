@@ -29,12 +29,14 @@ const API = {
     updateAssistanceOrder: (
       orderId,
       status,
-      password
+      password,
+      totalTime
     ) =>
       axios.put(`${baseURL}/order`, {
         orderId,
         status,
-        password
+        password,
+        totalTime
       }),
 };
 
