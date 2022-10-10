@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Home from "./components/Home";
 import NotFound from "./components/NotFound";
+import OrderUpdater from "./components/OrderUpdater/OrderUpdater";
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
         <div className="container p-2">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/order-updater" element={<OrderUpdater />} />
             {/* <Route path="/assistances/:assistanceId" element={<Assistance />} /> */}
             {/* <Route path="/user/:userId" element={<User />} /> */}
             <Route path="*" element={<NotFound />} />
