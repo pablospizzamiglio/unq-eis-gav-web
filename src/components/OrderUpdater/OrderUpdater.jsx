@@ -115,6 +115,9 @@ const OrderUpdater = () => {
             </label>
             <div className="col-sm-2">
               <div className="form-check">
+                <label className="input-group-text" htmlFor="imputHH">
+                  Hour
+                </label>
                 <select
                   className="form-select form-select-lg mb-3"
                   aria-label="Hh filter"
@@ -129,9 +132,11 @@ const OrderUpdater = () => {
                 </select>
               </div>
             </div>
-            hs
             <div className="col-sm-2">
               <div className="form-check">
+                <label className="input-group-text" htmlFor="imputHMM">
+                  Minute
+                </label>
                 <select
                   className="form-select form-select-lg mb-3"
                   aria-label="Mm filter"
@@ -146,7 +151,6 @@ const OrderUpdater = () => {
                 </select>
               </div>
             </div>
-            mm
           </div>
         )}
 
