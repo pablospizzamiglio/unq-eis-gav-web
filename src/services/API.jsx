@@ -26,16 +26,12 @@ const API = {
       province,
       phoneNumber,
     }),
-    updateAssistanceOrder: (
+  updateAssistanceOrder: (orderId, status, password) =>
+    axios.put(`${baseURL}/order`, {
       orderId,
       status,
-      password
-    ) =>
-      axios.put(`${baseURL}/order`, {
-        orderId,
-        status,
-        password
-      }),
+      password,
+    }),
 };
 
 export default API;
