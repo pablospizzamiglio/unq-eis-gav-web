@@ -41,6 +41,7 @@ const OrderUpdater = () => {
     setPassword("");
     setSelectedHhFilterOption(hhFilterOptions[0].value);
     setSelectedMmFilterOption(mmFilterOptions[0].value);
+    setViewTime(false);
   };
 
   setTimeout(() => {
@@ -50,7 +51,6 @@ const OrderUpdater = () => {
   const requestUpdateOrder = (event) => {
     event.preventDefault();
     setPopUpConfirmation(false);
-    setViewTime(false);
     setFormErrors("");
 
     API.updateAssistanceOrder(idOrder, status, password)
