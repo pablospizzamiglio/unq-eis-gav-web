@@ -50,6 +50,7 @@ const OrderUpdater = () => {
   const requestUpdateOrder = (event) => {
     event.preventDefault();
     setPopUpConfirmation(false);
+    setViewTime(false);
     setFormErrors("");
 
     API.updateAssistanceOrder(idOrder, status, password)
