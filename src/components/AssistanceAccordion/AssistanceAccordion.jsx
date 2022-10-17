@@ -133,13 +133,28 @@ const AssistanceAccordion = () => {
   const requestAssistanceForRegisteredUser = (event) => {
     event.preventDefault();
     setIsSubmitting(true);
+    {console.log(idUser)}
     
-    API.getUser(selectedAssistance.id)
+    API.getUser("4db16830-d9a7-4159-94aa-0e6f9467a3c9")
       .then((response) => {
-        {console.log(response)};
-        setPopUpConfirmation(true);
-        resetAssistanceRequestForm();
-        setShowRequestAssistanceModal(false);
+        API.createAssistanceOrder(
+          selectedAssistance.id,
+          street,
+          betweenStreets,
+          city,
+          province,
+          phoneNumber,
+          response.data.id
+        )
+          .then((response) => {
+            setPopUpConfirmation(true);
+            resetAssistanceRequestForm();
+            setShowRequestAssistanceModal(false);
+          })
+          .catch((error) => {
+            setPopUpConfirmation(false);
+            setFormErrors(error.response.data.message);
+          });
       })
       .catch((error) => {
         setPopUpConfirmation(false);
@@ -347,8 +362,27 @@ const AssistanceAccordion = () => {
               />
             </div>
 
+            <div className="col-md-6">
+              <div className="phone-number">
+                <label htmlFor="phone-number" className="form-label">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  className="form-control"
+                  id="phone-number"
+                  required={true}
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  pattern="[0-9]{10}"
+                  minLength={10}
+                  maxLength={10}
+                />
+              </div>
+            </div>
+
             <div className="col-md-12">
-              <label htmlFor="phone-number" className="form-label">
+              <label htmlFor="select-user" className="form-label">
                 Select User:
               </label>
             </div>
@@ -436,26 +470,6 @@ const AssistanceAccordion = () => {
                     required={true}
                     value={type}
                     onChange={(e) => setType(e.target.value)}
-                  />
-                </div>
-              </div>
-            )}
-            {!isActiveNewUser && (
-              <div className="col-md-6">
-                <div className="collapse" id="newUser">
-                  <label htmlFor="phone-number" className="form-label">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    className="form-control"
-                    id="phone-number"
-                    required={true}
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    pattern="[0-9]{10}"
-                    minLength={10}
-                    maxLength={10}
                   />
                 </div>
               </div>
