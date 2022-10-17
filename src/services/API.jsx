@@ -13,6 +13,20 @@ const API = {
   getUser: (id) => {
     return axios.get(`${baseURL}/user/${id}`);
   },
+  createUser: (
+    firstName,
+    lastName,
+    type,
+    emailAddress,
+    telephoneNumber
+  ) =>
+    axios.post(`${baseURL}/user`, {
+      firstName,
+      lastName,
+      type,
+      emailAddress,
+      telephoneNumber
+    }),
   createAssistanceOrder: (
     assistanceId,
     street,

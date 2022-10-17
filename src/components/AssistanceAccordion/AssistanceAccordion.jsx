@@ -104,22 +104,29 @@ const AssistanceAccordion = () => {
     event.preventDefault();
     setIsSubmitting(true);
 
-    /* API.createAssistanceOrderForNewUser(
-      selectedAssistance.id,
-      street,
-      betweenStreets,
-      city,
-      province,
-      firstName,
-      lastName,
-      type,
-      phoneNumber,
-      email
-    )
+    API.createUser(firstName, lastName, type, email, phoneNumber)
       .then((response) => {
-        setPopUpConfirmation(true);
-        resetAssistanceRequestForm();
-        setShowRequestAssistanceModal(false);
+        {
+          console.log(response.data);
+        }
+        API.createAssistanceOrder(
+          selectedAssistance.id,
+          street,
+          betweenStreets,
+          city,
+          province,
+          phoneNumber,
+          response.data.id
+        )
+          .then((response) => {
+            setPopUpConfirmation(true);
+            resetAssistanceRequestForm();
+            setShowRequestAssistanceModal(false);
+          })
+          .catch((error) => {
+            setPopUpConfirmation(false);
+            setFormErrors(error.response.data.message);
+          });
       })
       .catch((error) => {
         setPopUpConfirmation(false);
@@ -127,15 +134,14 @@ const AssistanceAccordion = () => {
       })
       .finally(() => {
         setIsSubmitting(false);
-      }); */
+      });
   };
 
   const requestAssistanceForRegisteredUser = (event) => {
     event.preventDefault();
     setIsSubmitting(true);
-    {console.log(idUser)}
-    
-    API.getUser("4db16830-d9a7-4159-94aa-0e6f9467a3c9")
+
+    API.getUser(idUser)
       .then((response) => {
         API.createAssistanceOrder(
           selectedAssistance.id,
@@ -421,94 +427,85 @@ const AssistanceAccordion = () => {
               </p>
             </div>
 
-            {!isActiveNewUser && (
-              <div className="col-md-6">
-                <div className="collapse" id="newUser">
-                  <label htmlFor="firstName" className="form-label">
-                    First Name
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="firstName"
-                    required={true}
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                  />
-                </div>
+            <div className="col-md-6">
+              <div className="collapse" id="newUser">
+                <label htmlFor="firstName" className="form-label">
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="firstName"
+                  required={true}
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
               </div>
-            )}
+            </div>
 
-            {!isActiveNewUser && (
-              <div className="col-md-6">
-                <div className="collapse" id="newUser">
-                  <label htmlFor="lastName" className="form-label">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="lastName"
-                    required={true}
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                  />
-                </div>
+            <div className="col-md-6">
+              <div className="collapse" id="newUser">
+                <label htmlFor="lastName" className="form-label">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="lastName"
+                  required={true}
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
               </div>
-            )}
+            </div>
 
-            {!isActiveNewUser && (
-              <div className="col-md-6">
-                <div className="collapse" id="newUser">
-                  <label htmlFor="type" className="form-label">
-                    Type
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="type"
-                    required={true}
-                    value={type}
-                    onChange={(e) => setType(e.target.value)}
-                  />
-                </div>
+            <div className="col-md-6">
+              <div className="collapse" id="newUser">
+                <label htmlFor="type" className="form-label">
+                  Type
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="type"
+                  required={true}
+                  value={type}
+                  onChange={(e) => setType(e.target.value)}
+                />
               </div>
-            )}
+            </div>
 
-            {!isActiveNewUser && (
-              <div className="col-md-6">
-                <div className="collapse" id="newUser" disabled={false}>
-                  <label htmlFor="mail" className="form-label">
-                    Mail
-                  </label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    id="email"
-                    required={true}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
+            <div className="col-md-6">
+              <div className="collapse" id="newUser" disabled={false}>
+                <label htmlFor="mail" className="form-label">
+                  Mail
+                </label>
+                <input
+                  type="email"
+                  className="form-control"
+                  id="email"
+                  required={true}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </div>
-            )}
-            {!isActiveIdUser && (
-              <div className="col-md-12">
-                <div className="collapse" id="idUser" disabled={isActiveIdUser}>
-                  <label htmlFor="idUser" className="form-label">
-                    Id user
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="idUser"
-                    required={true}
-                    value={idUser}
-                    onChange={(e) => setIdUser(e.target.value)}
-                  />
-                </div>
+            </div>
+
+            <div className="col-md-12">
+              <div className="collapse" id="idUser" disabled={isActiveIdUser}>
+                <label htmlFor="idUser" className="form-label">
+                  Id user
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="idUser"
+                  required={true}
+                  value={idUser}
+                  onChange={(e) => setIdUser(e.target.value)}
+                />
               </div>
-            )}
+            </div>
 
             {formErrors && (
               <div className="col-md-12 pt-2">
