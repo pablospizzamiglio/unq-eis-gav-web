@@ -30,11 +30,19 @@ const AssistanceAccordion = () => {
   const [fixedCostAssistance, setFixedCostAssistance] = useState("");
   const [costPerKmAssistance, setCostPerKmAssistance] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isActiveIdUser, setIsActiveIdUser] = useState(false);
+  const [isActiveNewUser, setIsActiveNewUser] = useState(false);
   const [street, setStreet] = useState("");
   const [betweenStreets, setBetweenStreets] = useState("");
   const [city, setCity] = useState("");
   const [province, setProvince] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [type, setType] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
+  const [idUser, setIdUser] = useState("");
+  const [request, setRequest] = useState(null);
   const [formErrors, setFormErrors] = useState("");
 
   const handleKindFilterChange = (event) => {
@@ -42,7 +50,10 @@ const AssistanceAccordion = () => {
   };
 
   const resetAssistanceRequestForm = () => {
+    setFormErrors("");
     setSelectedAssistance(null);
+    setRequest(null);
+    setIdUser("");
     setNameAssistance("");
     setPhoneNumberAssistance("");
     setFixedCostAssistance("");
@@ -51,7 +62,11 @@ const AssistanceAccordion = () => {
     setBetweenStreets("");
     setCity("");
     setProvince("");
+    setFirstName("");
+    setLastName("");
+    setType("");
     setPhoneNumber("");
+    setEmail("");
   };
 
   setTimeout(() => {
@@ -75,21 +90,53 @@ const AssistanceAccordion = () => {
     resetAssistanceRequestForm();
   };
 
-  const requestAssistance = (event) => {
+  const registeredUser = (event) => {
+    setIsActiveNewUser(!isActiveNewUser);
+    setRequest(() => requestAssistanceForRegisteredUser);
+  };
+
+  const newUser = (event) => {
+    setIsActiveIdUser(!isActiveIdUser);
+    setRequest(() => requestAssistanceForNewUser);
+  };
+
+  const requestAssistanceForNewUser = (event) => {
     event.preventDefault();
-
     setIsSubmitting(true);
-    setFormErrors("");
 
-    API.createAssistanceOrder(
+    /* API.createAssistanceOrderForNewUser(
       selectedAssistance.id,
       street,
       betweenStreets,
       city,
       province,
-      phoneNumber
+      firstName,
+      lastName,
+      type,
+      phoneNumber,
+      email
     )
       .then((response) => {
+        setPopUpConfirmation(true);
+        resetAssistanceRequestForm();
+        setShowRequestAssistanceModal(false);
+      })
+      .catch((error) => {
+        setPopUpConfirmation(false);
+        setFormErrors(error.response.data.message);
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      }); */
+  };
+
+  const requestAssistanceForRegisteredUser = (event) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    
+    API.getUser(selectedAssistance.id)
+      .then((response) => {
+        {console.log(response)};
         setPopUpConfirmation(true);
         resetAssistanceRequestForm();
         setShowRequestAssistanceModal(false);
@@ -211,7 +258,7 @@ const AssistanceAccordion = () => {
       <Modal
         title="Confirm Assistance Request"
         show={showRequestAssistanceModal}
-        onConfirm={requestAssistance}
+        onConfirm={request}
         onClose={closeRequestAssistanceModal}
       >
         <fieldset disabled={isSubmitting}>
@@ -302,20 +349,152 @@ const AssistanceAccordion = () => {
 
             <div className="col-md-12">
               <label htmlFor="phone-number" className="form-label">
-                Phone Number
+                Select User:
               </label>
-              <input
-                type="tel"
-                className="form-control"
-                id="phone-number"
-                required={true}
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                pattern="[0-9]{10}"
-                minLength={10}
-                maxLength={10}
-              />
             </div>
+
+            <div className="col-md-6">
+              <p>
+                <button
+                  className="btn btn-primary"
+                  type="button"
+                  disabled={isActiveNewUser}
+                  data-bs-toggle="collapse"
+                  data-bs-target="#newUser"
+                  aria-expanded="false"
+                  aria-controls="newUser"
+                  onClick={newUser}
+                >
+                  New User
+                </button>
+              </p>
+            </div>
+
+            <div className="col-md-6">
+              <p>
+                <button
+                  className="btn btn-primary"
+                  type="button"
+                  disabled={isActiveIdUser}
+                  data-bs-toggle="collapse"
+                  data-bs-target="#idUser"
+                  aria-expanded="false"
+                  aria-controls="idUser"
+                  onClick={registeredUser}
+                >
+                  Id User
+                </button>
+              </p>
+            </div>
+
+            {!isActiveNewUser && (
+              <div className="col-md-6">
+                <div className="collapse" id="newUser">
+                  <label htmlFor="firstName" className="form-label">
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="firstName"
+                    required={true}
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+
+            {!isActiveNewUser && (
+              <div className="col-md-6">
+                <div className="collapse" id="newUser">
+                  <label htmlFor="lastName" className="form-label">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="lastName"
+                    required={true}
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+
+            {!isActiveNewUser && (
+              <div className="col-md-6">
+                <div className="collapse" id="newUser">
+                  <label htmlFor="type" className="form-label">
+                    Type
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="type"
+                    required={true}
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+            {!isActiveNewUser && (
+              <div className="col-md-6">
+                <div className="collapse" id="newUser">
+                  <label htmlFor="phone-number" className="form-label">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    className="form-control"
+                    id="phone-number"
+                    required={true}
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    pattern="[0-9]{10}"
+                    minLength={10}
+                    maxLength={10}
+                  />
+                </div>
+              </div>
+            )}
+
+            {!isActiveNewUser && (
+              <div className="col-md-6">
+                <div className="collapse" id="newUser" disabled={false}>
+                  <label htmlFor="mail" className="form-label">
+                    Mail
+                  </label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="email"
+                    required={true}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+            {!isActiveIdUser && (
+              <div className="col-md-12">
+                <div className="collapse" id="idUser" disabled={isActiveIdUser}>
+                  <label htmlFor="idUser" className="form-label">
+                    Id user
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="idUser"
+                    required={true}
+                    value={idUser}
+                    onChange={(e) => setIdUser(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
 
             {formErrors && (
               <div className="col-md-12 pt-2">

@@ -10,6 +10,9 @@ const API = {
       return axios.get(`${baseURL}/assistances?kind=${kind}`);
     }
   },
+  getUser: (id) => {
+    return axios.get(`${baseURL}/user`, { id });
+  },
   createAssistanceOrder: (
     assistanceId,
     street,
