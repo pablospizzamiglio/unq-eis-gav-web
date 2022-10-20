@@ -10,13 +10,31 @@ const API = {
       return axios.get(`${baseURL}/assistances?kind=${kind}`);
     }
   },
+  getUser: (id) => {
+    return axios.get(`${baseURL}/user/${id}`);
+  },
+  createUser: (
+    firstName,
+    lastName,
+    type,
+    emailAddress,
+    telephoneNumber
+  ) =>
+    axios.post(`${baseURL}/user`, {
+      firstName,
+      lastName,
+      type,
+      emailAddress,
+      telephoneNumber
+    }),
   createAssistanceOrder: (
     assistanceId,
     street,
     betweenStreets,
     city,
     province,
-    phoneNumber
+    phoneNumber,
+    userId
   ) =>
     axios.post(`${baseURL}/order`, {
       assistanceId,
@@ -25,19 +43,14 @@ const API = {
       city,
       province,
       phoneNumber,
+      userId
     }),
-    updateAssistanceOrder: (
+  updateAssistanceOrder: (orderId, status, password) =>
+    axios.put(`${baseURL}/order`, {
       orderId,
       status,
       password,
-      totalTime
-    ) =>
-      axios.put(`${baseURL}/order`, {
-        orderId,
-        status,
-        password,
-        totalTime
-      }),
+    }),
 };
 
 export default API;

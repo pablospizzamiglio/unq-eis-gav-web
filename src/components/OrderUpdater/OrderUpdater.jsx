@@ -7,24 +7,41 @@ const OrderUpdater = () => {
   const [idOrder, setIdOrder] = useState("");
   const [status, setStatus] = useState("");
   const [password, setPassword] = useState("");
-  const [mail, setMail] = useState("");
-  const [hh, setHh] = useState("");
-  const [mm, setMm] = useState("");
   const [formErrors, setFormErrors] = useState("");
   const [popUpConfirmation, setPopUpConfirmation] = useState(false);
+  const [viewTime, setViewTime] = useState(false);
+  const hhFilterOptions = [
+    { value: "00", text: "00" },
+    { value: "01", text: "01" },
+    { value: "02", text: "02" },
+    { value: "03", text: "03" },
+    { value: "04", text: "04" },
+  ];
+  const mmFilterOptions = [
+    { value: "00", text: "00" },
+    { value: "10", text: "10" },
+    { value: "20", text: "20" },
+    { value: "30", text: "30" },
+    { value: "40", text: "40" },
+    { value: "50", text: "50" },
+  ];
+  const [selectedHhFilterOption, setSelectedHhFilterOption] = useState(
+    hhFilterOptions[0].value
+  );
+  const [selectedMmFilterOption, setSelectedMmFilterOption] = useState(
+    mmFilterOptions[0].value
+  );
 
   const acceptAssistance = () => {
     setStatus("IN_PROGRESS");
-    setMail(
-      `mailto:me@cosas.com?subject=Order%20${idOrder}%20accepted%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20accepted.%20Please%20wait%20in%20the%20place%20until%20it%20arrives.%0A%0AGreetings.`
-    );
-    setHh(document.getElementById("imputHH").value)
-    setMm(document.getElementById("imputMM").value)
+    setViewTime(true);
   };
   const resetUpdateRequestForm = () => {
     setIdOrder("");
     setPassword("");
-    setMail("");
+    setSelectedHhFilterOption(hhFilterOptions[0].value);
+    setSelectedMmFilterOption(mmFilterOptions[0].value);
+    setViewTime(false);
   };
 
   setTimeout(() => {
@@ -40,8 +57,10 @@ const OrderUpdater = () => {
     API.updateAssistanceOrder(idOrder, status, password, totalTime)
       .then((response) => {
         setPopUpConfirmation(true);
-        window.location.href = mail;
-        resetUpdateRequestForm();
+        if (status === "IN_PROGRESS") {
+          window.location.href = `mailto:me@cosas.com?subject=Order%20${idOrder}%20accepted%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20accepted.%20Please%20wait%20in%20the%20place%20until%20it%20arrives.%0AApproximate%20waiting%20time%3A%20${selectedHhFilterOption}:${selectedMmFilterOption}%20hs%0A%0AGreetings.%0A%0AGAV`;
+          resetUpdateRequestForm();
+        }
       })
       .catch((error) => {
         setPopUpConfirmation(false);
@@ -51,7 +70,7 @@ const OrderUpdater = () => {
 
   return (
     <>
-    <h2>Order Updater</h2>
+      <h2>Order Updater</h2>
       <form className="formOrder" onSubmit={requestUpdateOrder}>
         {popUpConfirmation && <PopUp role="alert" text="Updated order " />}
         <div className="mb-3 row">
@@ -91,9 +110,51 @@ const OrderUpdater = () => {
           </div>
         </div>
 
-        {// combos para seleccioanr la hh:mm de tiempo de espera
-          WeitingtTimeSelect(status)
-        }
+        {viewTime && (
+          <div className="mb-3 row">
+            <label htmlFor="inputTime" className="col-sm-2 col-form-label">
+              Approximate waiting time:
+            </label>
+            <div className="col-sm-2">
+              <div className="form-check">
+                <label className="input-group-text" htmlFor="imputHH">
+                  Hour
+                </label>
+                <select
+                  className="form-select form-select-lg mb-3"
+                  aria-label="Hh filter"
+                  value={selectedHhFilterOption}
+                  onChange={(e) => setSelectedHhFilterOption(e.target.value)}
+                >
+                  {hhFilterOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.text}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="col-sm-2">
+              <div className="form-check">
+                <label className="input-group-text" htmlFor="imputHMM">
+                  Minute
+                </label>
+                <select
+                  className="form-select form-select-lg mb-3"
+                  aria-label="Mm filter"
+                  value={selectedMmFilterOption}
+                  onChange={(e) => setSelectedMmFilterOption(e.target.value)}
+                >
+                  {mmFilterOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.text}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="mb-3 row">
           <label htmlFor="inputPassword" className="col-sm-2 col-form-label">
