@@ -32,10 +32,10 @@ const OrderUpdater = () => {
     mmFilterOptions[0].value
   );
 
-  const acceptAssistance = () => {
-    setStatus("IN_PROGRESS");
-    setViewTime(true);
-  };
+  //const acceptAssistance = () => {
+  //  setStatus("IN_PROGRESS");
+  //  setViewTime(true);
+  //};
   const resetUpdateRequestForm = () => {
     setIdOrder("");
     setPassword("");
@@ -52,13 +52,17 @@ const OrderUpdater = () => {
     event.preventDefault();
     setPopUpConfirmation(false);
     setFormErrors("");
-    var totalTime = hh * 60 + mm
+    //var totalTime = hh * 60 + mm
 
-    API.updateAssistanceOrder(idOrder, status, password, totalTime)
+    API.updateAssistanceOrder(idOrder, status, password)
       .then((response) => {
         setPopUpConfirmation(true);
         if (status === "IN_PROGRESS") {
           window.location.href = `mailto:me@cosas.com?subject=Order%20${idOrder}%20accepted%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20accepted.%20Please%20wait%20in%20the%20place%20until%20it%20arrives.%0AApproximate%20waiting%20time%3A%20${selectedHhFilterOption}:${selectedMmFilterOption}%20hs%0A%0AGreetings.%0A%0AGAV`;
+          resetUpdateRequestForm();
+        }
+        if (status === "CANCELED") {
+          window.location.href = `mailto:me@cosas.com?subject=Order%20${idOrder}%20canceled%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20canceled%20by%20the%20assistant.%0A%0AGreetings.%0A%0AGAV`;
           resetUpdateRequestForm();
         }
       })
@@ -101,10 +105,24 @@ const OrderUpdater = () => {
                 id="flexRadioDefault1"
                 required={true}
                 value={status}
-                onChange={() => acceptAssistance()}
+                onChange={(e) => {setStatus(e.target.value); setViewTime(true)}}
               />
               <label className="form-check-label" htmlFor="flexRadioDefault1">
                 IN_PROGRESS
+              </label>
+            </div>
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="radio"
+                name="flexRadioDefault"
+                id="flexRadioDefault2"
+                required={true}
+                value={status}
+                onChange={(e) => {setStatus(e.target.value); setViewTime(false)}}
+              />
+              <label className="form-check-label" htmlFor="flexRadioDefault2">
+                CANCELED
               </label>
             </div>
           </div>
