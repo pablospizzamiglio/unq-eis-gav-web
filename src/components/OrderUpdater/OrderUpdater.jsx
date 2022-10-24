@@ -3,13 +3,18 @@ import API from "../../services/API";
 import PopUp from "../PopUp/PopUp";
 import "./OrderUpdater.css";
 
+const ORDER_STATUS = {
+  IN_PROGRESS: "IN_PROGRESS",
+  CANCELLED: "CANCELLED",
+};
+
 const OrderUpdater = () => {
   const [idOrder, setIdOrder] = useState("");
   const [status, setStatus] = useState("");
   const [password, setPassword] = useState("");
   const [formErrors, setFormErrors] = useState("");
   const [popUpConfirmation, setPopUpConfirmation] = useState(false);
-  const [viewTime, setViewTime] = useState(false);
+  const [showWaitingTimeInput, setShowWaitingTimeInput] = useState(false);
   const hhFilterOptions = [
     { value: "00", text: "00" },
     { value: "01", text: "01" },
@@ -32,9 +37,10 @@ const OrderUpdater = () => {
     mmFilterOptions[0].value
   );
 
-  const acceptAssistance = () => {
-    setStatus("IN_PROGRESS");
-    setViewTime(true);
+  const handleStatusChange = (value) => {
+    setStatus(value);
+    console.log(value);
+    setShowWaitingTimeInput(value === ORDER_STATUS[value]);
   };
 
   const resetUpdateRequestForm = () => {
@@ -42,7 +48,6 @@ const OrderUpdater = () => {
     setPassword("");
     setSelectedHhFilterOption(hhFilterOptions[0].value);
     setSelectedMmFilterOption(mmFilterOptions[0].value);
-    setViewTime(false);
   };
 
   setTimeout(() => {
@@ -57,13 +62,16 @@ const OrderUpdater = () => {
     API.updateAssistanceOrder(idOrder, status, password)
       .then((response) => {
         setPopUpConfirmation(true);
-        if (status === "IN_PROGRESS") {
-          window.location.href = `mailto:me@cosas.com?subject=Order%20${idOrder}%20accepted%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20accepted.%20Please%20wait%20in%20the%20place%20until%20it%20arrives.%0AApproximate%20waiting%20time%3A%20${selectedHhFilterOption}:${selectedMmFilterOption}%20hs%0A%0AGreetings.%0A%0AGAV`;
-          resetUpdateRequestForm();
-        } else if (status === "CANCELLED") {
-          window.location.href = `mailto:me@cosas.com?subject=Order%20${idOrder}%20cancelled%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20cancelled%20by%20the%20assistant.%0A%0AGreetings.%0A%0AGAV`;
-          resetUpdateRequestForm();
+        switch (status) {
+          case ORDER_STATUS.IN_PROGRESS:
+            window.location.href = `mailto:me@cosas.com?subject=Order%20${idOrder}%20accepted%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20accepted.%20Please%20wait%20in%20the%20place%20until%20it%20arrives.%0AApproximate%20waiting%20time%3A%20${selectedHhFilterOption}:${selectedMmFilterOption}%20hs%0A%0AGreetings.%0A%0AGAV`;
+            break;
+          case ORDER_STATUS.CANCELLED:
+            window.location.href = `mailto:me@cosas.com?subject=Order%20${idOrder}%20cancelled%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20cancelled%20by%20the%20assistant.%0A%0AGreetings.%0A%0AGAV`;
+            break;
+          default:
         }
+        resetUpdateRequestForm();
       })
       .catch((error) => {
         setPopUpConfirmation(false);
@@ -77,14 +85,14 @@ const OrderUpdater = () => {
       <form className="formOrder" onSubmit={requestUpdateOrder}>
         {popUpConfirmation && <PopUp role="alert" text="Updated order " />}
         <div className="mb-3 row">
-          <label htmlFor="staticIdOrder" className="col-sm-2 col-form-label">
-            Id Order:
+          <label htmlFor="orderId" className="col-sm-2 col-form-label">
+            Order Id
           </label>
           <div className="col-sm-5">
             <input
               type="text"
               className="form-control"
-              id="inputIdOrder"
+              id="orderId"
               required={true}
               value={idOrder}
               onChange={(e) => setIdOrder(e.target.value)}
@@ -92,54 +100,47 @@ const OrderUpdater = () => {
           </div>
         </div>
         <div className="mb-3 row">
-          <label htmlFor="inputStatus" className="col-sm-2 col-form-label">
-            Status:
-          </label>
+          <label className="col-sm-2 radio-inline control-label">Status</label>
           <div className="col-sm-4">
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                type="radio"
-                name="flexRadioDefault"
-                id="flexRadioDefault1"
-                required={true}
-                value={status}
-                onChange={acceptAssistance}
-              />
-              <label className="form-check-label" htmlFor="flexRadioDefault1">
-                IN_PROGRESS
-              </label>
-            </div>
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                type="radio"
-                name="flexRadioDefault"
-                id="flexRadioDefault2"
-                required={true}
-                value={status}
-                onChange={() => setStatus("CANCELLED")}
-              />
-              <label className="form-check-label" htmlFor="flexRadioDefault2">
-                CANCELLED
-              </label>
-            </div>
+            {Object.keys(ORDER_STATUS).map((value, index) => {
+              const elementId = `radio-${index}`;
+              return (
+                <div className="form-check form-check-inline" key={index}>
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="order-status"
+                    id={elementId}
+                    required={true}
+                    value={value}
+                    onChange={() => handleStatusChange(value)}
+                  />
+                  <label
+                    className="form-check-label capitalize"
+                    htmlFor={elementId}
+                  >
+                    {ORDER_STATUS[value].replaceAll("_", " ")}
+                  </label>
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {viewTime && (
+        {showWaitingTimeInput && (
           <div className="mb-3 row">
-            <label htmlFor="inputTime" className="col-sm-2 col-form-label">
-              Approximate waiting time:
+            <label className="col-sm-2 col-form-label">
+              Approximate waiting time
             </label>
             <div className="col-sm-2">
               <div className="form-check">
-                <label className="input-group-text" htmlFor="imputHH">
-                  Hour
+                <label className="form-label" htmlFor="imputHH">
+                  Hours
                 </label>
                 <select
-                  className="form-select form-select-lg mb-3"
-                  aria-label="Hh filter"
+                  id="inputHH"
+                  className="form-select form-select"
+                  aria-label="Hours"
                   value={selectedHhFilterOption}
                   onChange={(e) => setSelectedHhFilterOption(e.target.value)}
                 >
@@ -153,12 +154,13 @@ const OrderUpdater = () => {
             </div>
             <div className="col-sm-2">
               <div className="form-check">
-                <label className="input-group-text" htmlFor="imputHMM">
-                  Minute
+                <label className="form-label" htmlFor="imputMM">
+                  Minutes
                 </label>
                 <select
-                  className="form-select form-select-lg mb-3"
-                  aria-label="Mm filter"
+                  id="imputMM"
+                  className="form-select form-select"
+                  aria-label="Minutes"
                   value={selectedMmFilterOption}
                   onChange={(e) => setSelectedMmFilterOption(e.target.value)}
                 >
@@ -175,7 +177,7 @@ const OrderUpdater = () => {
 
         <div className="mb-3 row">
           <label htmlFor="inputPassword" className="col-sm-2 col-form-label">
-            Password:
+            Password
           </label>
           <div className="col-sm-4">
             <input
