@@ -32,10 +32,11 @@ const OrderUpdater = () => {
     mmFilterOptions[0].value
   );
 
-  //const acceptAssistance = () => {
-  //  setStatus("IN_PROGRESS");
-  //  setViewTime(true);
-  //};
+  const acceptAssistance = () => {
+    setStatus("IN_PROGRESS");
+    setViewTime(true);
+  };
+
   const resetUpdateRequestForm = () => {
     setIdOrder("");
     setPassword("");
@@ -52,7 +53,6 @@ const OrderUpdater = () => {
     event.preventDefault();
     setPopUpConfirmation(false);
     setFormErrors("");
-    //var totalTime = hh * 60 + mm
 
     API.updateAssistanceOrder(idOrder, status, password)
       .then((response) => {
@@ -60,9 +60,8 @@ const OrderUpdater = () => {
         if (status === "IN_PROGRESS") {
           window.location.href = `mailto:me@cosas.com?subject=Order%20${idOrder}%20accepted%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20accepted.%20Please%20wait%20in%20the%20place%20until%20it%20arrives.%0AApproximate%20waiting%20time%3A%20${selectedHhFilterOption}:${selectedMmFilterOption}%20hs%0A%0AGreetings.%0A%0AGAV`;
           resetUpdateRequestForm();
-        }
-        if (status === "CANCELED") {
-          window.location.href = `mailto:me@cosas.com?subject=Order%20${idOrder}%20canceled%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20canceled%20by%20the%20assistant.%0A%0AGreetings.%0A%0AGAV`;
+        } else if (status === "CANCELLED") {
+          window.location.href = `mailto:me@cosas.com?subject=Order%20${idOrder}%20cancelled%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20cancelled%20by%20the%20assistant.%0A%0AGreetings.%0A%0AGAV`;
           resetUpdateRequestForm();
         }
       })
@@ -105,7 +104,7 @@ const OrderUpdater = () => {
                 id="flexRadioDefault1"
                 required={true}
                 value={status}
-                onChange={(e) => {setStatus(e.target.value); setViewTime(true)}}
+                onChange={acceptAssistance}
               />
               <label className="form-check-label" htmlFor="flexRadioDefault1">
                 IN_PROGRESS
@@ -119,10 +118,10 @@ const OrderUpdater = () => {
                 id="flexRadioDefault2"
                 required={true}
                 value={status}
-                onChange={(e) => {setStatus(e.target.value); setViewTime(false)}}
+                onChange={() => setStatus("CANCELLED")}
               />
               <label className="form-check-label" htmlFor="flexRadioDefault2">
-                CANCELED
+                CANCELLED
               </label>
             </div>
           </div>
@@ -204,36 +203,6 @@ const OrderUpdater = () => {
       </form>
     </>
   );
-};
-
-const WeitingtTimeSelect = (status) => {
-    return(status === "IN_PROGRESS"?
-            <div className="mb-3 row">
-              <label htmlFor="staticIdOrder" className="col-sm-2 col-form-label">
-                Approximate waiting time:
-              </label>
-              <div className="col-sm-3">
-                <div class="input-group mb-3">
-                  <select class="form-select" id="imputHH">
-                    <option value="0" selected>0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                  </select>
-                  <label class="input-group-text" for="imputHH">Hour</label>
-                  <select class="form-select" id="imputMM">
-                    <option value="0" selected>00</option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="30">30</option>
-                    <option value="40">40</option>
-                    <option value="50">50</option>
-                  </select>
-                  <label class="input-group-text" for="imputHMM">Minute</label>
-                </div>
-              </div>
-            </div>:<></>);
 };
 
 export default OrderUpdater;
