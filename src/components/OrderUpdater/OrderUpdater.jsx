@@ -39,8 +39,7 @@ const OrderUpdater = () => {
 
   const handleStatusChange = (value) => {
     setStatus(value);
-    console.log(value);
-    setShowWaitingTimeInput(value === ORDER_STATUS[value]);
+    setShowWaitingTimeInput(value === ORDER_STATUS.IN_PROGRESS);
   };
 
   const resetUpdateRequestForm = () => {
