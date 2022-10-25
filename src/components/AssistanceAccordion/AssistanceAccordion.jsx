@@ -30,8 +30,8 @@ const AssistanceAccordion = () => {
   const [fixedCostAssistance, setFixedCostAssistance] = useState("");
   const [costPerKmAssistance, setCostPerKmAssistance] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isActiveIdUser, setIsActiveIdUser] = useState(false);
-  const [isActiveNewUser, setIsActiveNewUser] = useState(false);
+  const [isIsBlockedIdUser, setIsBlockedIdUser] = useState(false);
+  const [isBlockedNewUser, setIsBlockedNewUser] = useState(false);
   const [street, setStreet] = useState("");
   const [betweenStreets, setBetweenStreets] = useState("");
   const [city, setCity] = useState("");
@@ -42,7 +42,6 @@ const AssistanceAccordion = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [idUser, setIdUser] = useState("");
-  const [request, setRequest] = useState(null);
   const [formErrors, setFormErrors] = useState("");
 
   const handleKindFilterChange = (event) => {
@@ -52,7 +51,6 @@ const AssistanceAccordion = () => {
   const resetAssistanceRequestForm = () => {
     setFormErrors("");
     setSelectedAssistance(null);
-    setRequest(null);
     setIdUser("");
     setNameAssistance("");
     setPhoneNumberAssistance("");
@@ -67,6 +65,8 @@ const AssistanceAccordion = () => {
     setType("");
     setPhoneNumber("");
     setEmail("");
+    setIsBlockedIdUser(false);
+    setIsBlockedNewUser(false);
   };
 
   setTimeout(() => {
@@ -90,89 +90,79 @@ const AssistanceAccordion = () => {
     resetAssistanceRequestForm();
   };
 
-  const registeredUser = (event) => {
-    setIsActiveNewUser(!isActiveNewUser);
-    setRequest(() => requestAssistanceForRegisteredUser);
-  };
+  const confirmRequest = (event) => {
+    if (!isBlockedNewUser) {
+      event.preventDefault();
+      setIsSubmitting(true);
 
-  const newUser = (event) => {
-    setIsActiveIdUser(!isActiveIdUser);
-    setRequest(() => requestAssistanceForNewUser);
-  };
+      API.createUser(
+        firstName,
+        lastName,
+        type,
+        email,
+        phoneNumber
+      )
+        .then((response) => {
+          console.log(response.data);
+          API.createAssistanceOrder(
+            selectedAssistance.id,
+            street,
+            betweenStreets,
+            city,
+            province,
+            phoneNumber,
+            response.data.id
+          )
+            .then((response) => {
+              setPopUpConfirmation(true);
+              resetAssistanceRequestForm();
+              setShowRequestAssistanceModal(false);
+            })
+            .catch((error) => {
+              setPopUpConfirmation(false);
+              setFormErrors(error.response.data.message);
+            });
+        })
+        .catch((error) => {
+          setPopUpConfirmation(false);
+          setFormErrors(error.response.data.message);
+        })
+        .finally(() => {
+          setIsSubmitting(false);
+        });
+    } else {
+      event.preventDefault();
+      setIsSubmitting(true);
 
-  const requestAssistanceForNewUser = (event) => {
-    event.preventDefault();
-    setIsSubmitting(true);
-
-    API.createUser(
-      "firstName",
-      "lastName",
-      "type",
-      "email@gmail.com",
-      "1111111111"
-    )
-      .then((response) => {
-        console.log(response.data);
-        API.createAssistanceOrder(
-          selectedAssistance.id,
-          street,
-          betweenStreets,
-          city,
-          province,
-          phoneNumber,
-          response.data.id
-        )
-          .then((response) => {
-            setPopUpConfirmation(true);
-            resetAssistanceRequestForm();
-            setShowRequestAssistanceModal(false);
-          })
-          .catch((error) => {
-            setPopUpConfirmation(false);
-            setFormErrors(error.response.data.message);
-          });
-      })
-      .catch((error) => {
-        setPopUpConfirmation(false);
-        setFormErrors(error.response.data.message);
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
-  };
-
-  const requestAssistanceForRegisteredUser = (event) => {
-    event.preventDefault();
-    setIsSubmitting(true);
-
-    API.getUser("ee08ac6c-44b6-4dda-a3e3-8f9002a91263")
-      .then((response) => {
-        API.createAssistanceOrder(
-          selectedAssistance.id,
-          street,
-          betweenStreets,
-          city,
-          province,
-          phoneNumber,
-          response.data.id
-        )
-          .then((response) => {
-            setPopUpConfirmation(true);
-            resetAssistanceRequestForm();
-            setShowRequestAssistanceModal(false);
-          })
-          .catch((error) => {
-            setPopUpConfirmation(false);
-            setFormErrors(error.response.data.message);
-          });
-      })
-      .catch((error) => {
-        setPopUpConfirmation(false);
-        setFormErrors(error.response.data.message);
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
+      API.getUser(idUser)
+        .then((response) => {
+          API.createAssistanceOrder(
+            selectedAssistance.id,
+            street,
+            betweenStreets,
+            city,
+            province,
+            phoneNumber,
+            response.data.id
+          )
+            .then((response) => {
+              setPopUpConfirmation(true);
+              resetAssistanceRequestForm();
+              setShowRequestAssistanceModal(false);
+            })
+            .catch((error) => {
+              setPopUpConfirmation(false);
+              setFormErrors(error.response.data.message);
+            });
+        })
+        .catch((error) => {
+          setPopUpConfirmation(false);
+          setFormErrors(error.response.data.message);
+        })
+        .finally(() => {
+          setIsSubmitting(false);
+        });
+    }
   };
 
   useEffect(() => {
@@ -283,7 +273,7 @@ const AssistanceAccordion = () => {
       <Modal
         title="Confirm Assistance Request"
         show={showRequestAssistanceModal}
-        onConfirm={request}
+        onConfirm={confirmRequest}
         onClose={closeRequestAssistanceModal}
       >
         <fieldset disabled={isSubmitting}>
@@ -402,12 +392,12 @@ const AssistanceAccordion = () => {
                 <button
                   className="btn btn-primary"
                   type="button"
-                  disabled={isActiveNewUser}
+                  disabled={isBlockedNewUser}
                   data-bs-toggle="collapse"
                   data-bs-target="#newUser"
                   aria-expanded="false"
                   aria-controls="newUser"
-                  onClick={(e) => newUser(e)}
+                  onClick={() => setIsBlockedIdUser(!isIsBlockedIdUser)}
                 >
                   New User
                 </button>
@@ -419,18 +409,18 @@ const AssistanceAccordion = () => {
                 <button
                   className="btn btn-primary"
                   type="button"
-                  disabled={isActiveIdUser}
+                  disabled={isIsBlockedIdUser}
                   data-bs-toggle="collapse"
                   data-bs-target="#idUser"
                   aria-expanded="false"
                   aria-controls="idUser"
-                  onClick={(e) => registeredUser(e)}
+                  onClick={(e) => setIsBlockedNewUser(!isBlockedNewUser)}
                 >
                   Id User
                 </button>
               </p>
             </div>
-            {!isActiveNewUser && (
+            {!isBlockedNewUser && (
               <>
                 <div className="col-md-6">
                   <div className="collapse" id="newUser">
@@ -495,9 +485,9 @@ const AssistanceAccordion = () => {
               </>
             )}
 
-            {!isActiveIdUser && (
+            {!isIsBlockedIdUser && (
               <div className="col-md-12">
-                <div className="collapse" id="idUser" disabled={isActiveIdUser}>
+                <div className="collapse" id="idUser" disabled={isIsBlockedIdUser}>
                   <label htmlFor="idUser" className="form-label">
                     Id user
                   </label>
