@@ -30,7 +30,7 @@ const AssistanceAccordion = () => {
   const [fixedCostAssistance, setFixedCostAssistance] = useState("");
   const [costPerKmAssistance, setCostPerKmAssistance] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isIsBlockedIdUser, setIsBlockedIdUser] = useState(false);
+  const [isBlockedIdUser, setIsBlockedIdUser] = useState(false);
   const [isBlockedNewUser, setIsBlockedNewUser] = useState(false);
   const [street, setStreet] = useState("");
   const [betweenStreets, setBetweenStreets] = useState("");
@@ -91,17 +91,10 @@ const AssistanceAccordion = () => {
   };
 
   const confirmRequest = (event) => {
+    event.preventDefault();
+    setIsSubmitting(true);
     if (!isBlockedNewUser) {
-      event.preventDefault();
-      setIsSubmitting(true);
-
-      API.createUser(
-        firstName,
-        lastName,
-        type,
-        email,
-        phoneNumber
-      )
+      API.createUser(firstName, lastName, type, email, phoneNumber)
         .then((response) => {
           console.log(response.data);
           API.createAssistanceOrder(
@@ -131,9 +124,6 @@ const AssistanceAccordion = () => {
           setIsSubmitting(false);
         });
     } else {
-      event.preventDefault();
-      setIsSubmitting(true);
-
       API.getUser(idUser)
         .then((response) => {
           API.createAssistanceOrder(
@@ -397,7 +387,7 @@ const AssistanceAccordion = () => {
                   data-bs-target="#newUser"
                   aria-expanded="false"
                   aria-controls="newUser"
-                  onClick={() => setIsBlockedIdUser(!isIsBlockedIdUser)}
+                  onClick={() => setIsBlockedIdUser(!isBlockedIdUser)}
                 >
                   New User
                 </button>
@@ -409,7 +399,7 @@ const AssistanceAccordion = () => {
                 <button
                   className="btn btn-primary"
                   type="button"
-                  disabled={isIsBlockedIdUser}
+                  disabled={isBlockedIdUser}
                   data-bs-toggle="collapse"
                   data-bs-target="#idUser"
                   aria-expanded="false"
@@ -485,9 +475,13 @@ const AssistanceAccordion = () => {
               </>
             )}
 
-            {!isIsBlockedIdUser && (
+            {!isBlockedIdUser && (
               <div className="col-md-12">
-                <div className="collapse" id="idUser" disabled={isIsBlockedIdUser}>
+                <div
+                  className="collapse"
+                  id="idUser"
+                  disabled={isBlockedIdUser}
+                >
                   <label htmlFor="idUser" className="form-label">
                     Id user
                   </label>
