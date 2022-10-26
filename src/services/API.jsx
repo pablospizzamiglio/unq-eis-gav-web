@@ -51,6 +51,9 @@ const API = {
       status,
       password,
     }),
+    getOrder: (id) => {
+      return axios.get(`${baseURL}/order/${id}`);
+    },
 };
 
 export default API;
