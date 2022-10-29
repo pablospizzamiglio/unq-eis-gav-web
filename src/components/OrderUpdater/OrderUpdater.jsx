@@ -58,19 +58,33 @@ const OrderUpdater = () => {
     setPopUpConfirmation(false);
     setFormErrors("");
 
-    API.updateAssistanceOrder(idOrder, status, password)
-      .then((response) => {
-        setPopUpConfirmation(true);
-        switch (status) {
-          case ORDER_STATUS.IN_PROGRESS:
-            window.location.href = `mailto:me@cosas.com?subject=Order%20${idOrder}%20accepted%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20accepted.%20Please%20wait%20in%20the%20place%20until%20it%20arrives.%0AApproximate%20waiting%20time%3A%20${selectedHhFilterOption}:${selectedMmFilterOption}%20hs%0A%0AGreetings.%0A%0AGAV`;
-            break;
-          case ORDER_STATUS.CANCELLED:
-            window.location.href = `mailto:me@cosas.com?subject=Order%20${idOrder}%20cancelled%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20cancelled%20by%20the%20assistant.%0A%0AGreetings.%0A%0AGAV`;
-            break;
-          default:
-        }
-        resetUpdateRequestForm();
+    API.getOrder(idOrder)
+      .then((responseOrder) => {
+        API.getUser(responseOrder.data.user.id)
+          .then((responseUser) => {
+            API.updateAssistanceOrder(idOrder, status, password)
+              .then((response) => {
+                setPopUpConfirmation(true);
+                switch (status) {
+                  case ORDER_STATUS.IN_PROGRESS:
+                    window.location.href = `mailto:${responseUser.data.emailAddress}?subject=Order%20${idOrder}%20accepted%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20accepted.%20Please%20wait%20in%20the%20place%20until%20it%20arrives.%0AApproximate%20waiting%20time%3A%20${selectedHhFilterOption}:${selectedMmFilterOption}%20hs%0A%0AGreetings.%0A%0AGAV`;
+                    break;
+                  case ORDER_STATUS.CANCELLED:
+                    window.location.href = `mailto:${responseUser.data.emailAddress}?subject=Order%20${idOrder}%20cancelled%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20cancelled%20by%20the%20assistant.%0A%0AGreetings.%0A%0AGAV`;
+                    break;
+                  default:
+                }
+                resetUpdateRequestForm();
+              })
+              .catch((error) => {
+                setPopUpConfirmation(false);
+                setFormErrors(error.response.data.message);
+              });
+          })
+          .catch((error) => {
+            setPopUpConfirmation(false);
+            setFormErrors(error.response.data.message);
+          });
       })
       .catch((error) => {
         setPopUpConfirmation(false);
