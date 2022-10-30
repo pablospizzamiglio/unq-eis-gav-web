@@ -1,4 +1,14 @@
 import { useEffect, useState } from "react";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+  Box,
+  Button
+} from '@chakra-ui/react'
+import {MinusIcon , AddIcon } from '@chakra-ui/icons'
 import API from "../../services/API";
 import LoadingError from "../LoadingError";
 import Modal from "../Modal";
@@ -170,7 +180,7 @@ const AssistanceAccordion = () => {
 
   const renderTitle = () => (
     <div className="row">
-      <h1 className="important-title">Assistances</h1>
+      <h1 className="important-title">Vehicle Assistance Management</h1>
     </div>
   );
 
@@ -209,6 +219,62 @@ const AssistanceAccordion = () => {
           <div className="accordion" id="assistance-accordion">
             {assistances.result.map((assistance, i) => {
               return (
+                <Accordion allowMultiple>
+                  <AccordionItem>
+                    <h2>
+                      <AccordionButton  _expanded={{ bg: 'blue', color: 'white' }}>
+                        <Box flex='1' textAlign='left'>
+                          {assistance.assistant.firstName}{" "}
+                          {assistance.assistant.lastName}
+                        </Box>
+                        <AccordionIcon />
+                      </AccordionButton>
+                    </h2>
+                    <AccordionPanel pb={4}>
+                      <h5>Fixed Cost: ${assistance.fixedCost.toFixed(2)}</h5>
+                      <h5>Cost Per Km: ${assistance.costPerKm.toFixed(2)}</h5>
+
+                      <Button colorScheme='blue' onClick={() => openRequestAssistanceModal(assistance)}>
+                        <i
+                          className="bi bi-truck-flatbed"
+                          aria-hidden="true"
+                        ></i>
+                        {" Request Assistance"}
+                        </Button>
+                      
+                      <AccordionItem>
+                        {({ isDisable }) => (
+                          <>
+                            <h2>
+                              <AccordionButton>
+                                <Box flex='1' textAlign='left'>
+                                  Prices 
+                                </Box>
+                                {isDisable ? (
+                                  <MinusIcon fontSize='12px' />
+                                ) : (
+                                  <AddIcon fontSize='12px' />
+                                )}
+                              </AccordionButton>
+                            </h2>
+                            <AccordionPanel pb={4}>
+                              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+                              minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                              aliquip ex ea commodo consequat.
+                            </AccordionPanel>
+                          </>
+                        )}
+                      </AccordionItem>
+                    </AccordionPanel>
+                  </AccordionItem>
+
+                  
+                </Accordion>
+              
+
+
+/*
                 <div className="accordion-item" key={i}>
                   <h2 className="accordion-header" id={i}>
                     <button
@@ -231,10 +297,7 @@ const AssistanceAccordion = () => {
                       </h4>
                       <h4>Fixed Cost: ${assistance.fixedCost.toFixed(2)}</h4>
                       <h4>Cost Per Km: ${assistance.costPerKm.toFixed(2)}</h4>
-                      <h4>
-                        User: {assistance.assistant.firstName}{" "}
-                        {assistance.assistant.lastName}
-                      </h4>
+                      
                       <button
                         type="button"
                         className="btn btn-primary"
@@ -249,8 +312,8 @@ const AssistanceAccordion = () => {
                     </div>
                   </div>
                 </div>
-              );
-            })}
+              );*/
+            )})}
           </div>
         </>
       )}
