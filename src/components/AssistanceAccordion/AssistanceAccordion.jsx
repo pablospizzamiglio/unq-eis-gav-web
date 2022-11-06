@@ -96,7 +96,6 @@ const AssistanceAccordion = () => {
     if (!isBlockedNewUser) {
       API.createUser(firstName, lastName, type, email, phoneNumber)
         .then((response) => {
-          console.log(response.data);
           API.createAssistanceOrder(
             selectedAssistance.id,
             street,
@@ -189,6 +188,8 @@ const AssistanceAccordion = () => {
     <div className="container">
       {renderTitle()}
 
+      {error && <LoadingError />}
+
       {!error && (
         <>
           <div className="row">
@@ -255,7 +256,6 @@ const AssistanceAccordion = () => {
         </>
       )}
 
-      {error && <LoadingError />}
       {popUpConfirmation && (
         <PopUp role="alert" text="Assistance order created successfully " />
       )}

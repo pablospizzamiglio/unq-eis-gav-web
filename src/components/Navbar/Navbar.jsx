@@ -1,5 +1,5 @@
-import "./Navbar.css";
 import { Link } from "react-router-dom";
+import "./Navbar.css";
 
 const Navbar = () => {
   return (
@@ -34,7 +34,7 @@ const Navbar = () => {
                 Pending order tracking
               </Link>
             </li>
-            <li class="nav-item">
+            <li className="nav-item">
               <Link to="/order-updater" className="navbar-brand text-black">
                 Orders
               </Link>
