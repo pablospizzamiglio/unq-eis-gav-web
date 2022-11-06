@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { URIS } from "../../constants";
 import API from "../../services/API";
 import PopUp from "../PopUp/PopUp";
 
@@ -217,6 +218,9 @@ const OrderUpdater = () => {
             </div>
           )}
 
+          <Link className="btn btn-secondary me-3" to={`${URIS.ORDERS}`}>
+            Go Back
+          </Link>
           <button className="btn btn-primary" type="submit">
             Update
           </button>

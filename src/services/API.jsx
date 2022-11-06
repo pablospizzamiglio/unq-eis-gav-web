@@ -52,7 +52,7 @@ const API = {
     if (!status) {
       return axios.get(`${baseURL}/orders`);
     } else {
-      return axios.get(`${baseURL}/orders?status=${status}`);
+      return axios.get(`${baseURL}/orders?status=${status.join(",")}`);
     }
   },
 };

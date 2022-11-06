@@ -4,13 +4,13 @@ import API from "../../services/API";
 import LoadingError from "../LoadingError";
 import Spinner from "../Spinner";
 
-const OrdersList = () => {
+const OrdersList = ({ status }) => {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    API.getOrders("PENDING_APPROVAL")
+    API.getOrders(status)
       .then((response) => {
         setOrders(response.data);
       })
@@ -20,7 +20,7 @@ const OrdersList = () => {
       .finally(() => {
         setIsLoading(false);
       });
-  }, []);
+  }, [status]);
 
   const renderTitle = () => (
     <div className="row">
