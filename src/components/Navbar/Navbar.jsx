@@ -35,15 +35,7 @@ const Navbar = () => {
             </li>
             <li className="nav-item">
               <Link to={`${URIS.ORDERS}`} className="navbar-brand text-black">
-                Pending order tracking
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                to={`${URIS.ORDER_UPDATER}`}
-                className="navbar-brand text-black"
-              >
-                Orders
+                Order Tracker
               </Link>
             </li>
           </ul>
