@@ -24,7 +24,7 @@ const OrdersList = ({ status }) => {
 
   const renderTitle = () => (
     <div className="row">
-      <h1 className="important-title">Pending Orders</h1>
+      <h1 className="important-title">Order Tracker</h1>
     </div>
   );
 

@@ -174,7 +174,7 @@ const AssistanceAccordion = () => {
 
   const renderTitle = () => (
     <div className="row">
-      <h1 className="important-title">Assistances</h1>
+      <h1 className="important-title">Assistance</h1>
     </div>
   );
 
