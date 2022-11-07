@@ -46,6 +46,12 @@ const Order = () => {
         <h1 className="important-title">Order Details</h1>
       </div>
 
+      <div className="row">
+        <div class="alert alert-success text-center" role="alert">
+          Assistance order created successfully
+        </div>
+      </div>
+
       <div className="row d-flex justify-content-center">
         <form>
           <div className="mb-3 row">
