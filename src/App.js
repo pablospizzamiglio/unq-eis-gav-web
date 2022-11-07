@@ -6,7 +6,10 @@ import "./App.css";
 import Home from "./components/Home";
 import Navbar from "./components/Navbar/Navbar";
 import NotFound from "./components/NotFound";
+import Order from "./components/Order/Order";
+import OrdersList from "./components/OrdersList/OrdersList";
 import OrderUpdater from "./components/OrderUpdater/OrderUpdater";
+import { URIS } from "./constants";
 
 const App = () => {
   return (
@@ -15,10 +18,19 @@ const App = () => {
         <Navbar />
         <div className="container p-2">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/order-updater" element={<OrderUpdater />} />
-            {/* <Route path="/assistances/:assistanceId" element={<Assistance />} /> */}
-            {/* <Route path="/user/:userId" element={<User />} /> */}
+            <Route path={URIS.ASSISTANCE} element={<Home />} />
+            <Route path={URIS.ORDER_UPDATER} element={<OrderUpdater />} />
+            <Route
+              path={URIS.ORDERS}
+              element={
+                <OrdersList status={["PENDING_APPROVAL", "IN_PROGRESS"]} />
+              }
+            />
+            <Route
+              path={`${URIS.ORDER_UPDATER}/:orderId`}
+              element={<OrderUpdater />}
+            />
+            <Route path={`${URIS.ORDERS}/:orderId`} element={<Order />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>

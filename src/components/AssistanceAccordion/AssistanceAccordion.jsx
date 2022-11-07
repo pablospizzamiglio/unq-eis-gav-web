@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { URIS } from "../../constants";
 import API from "../../services/API";
 import LoadingError from "../LoadingError";
 import Modal from "../Modal";
@@ -11,6 +13,7 @@ const AssistanceAccordion = () => {
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [popUpConfirmation, setPopUpConfirmation] = useState(false);
+  const navigate = useNavigate();
   const kindFilterOptions = [
     { value: "", text: "--Choose assistance kind--" },
     { value: "SMALL", text: "Small" },
@@ -96,7 +99,6 @@ const AssistanceAccordion = () => {
     if (!isBlockedNewUser) {
       API.createUser(firstName, lastName, type, email, phoneNumber)
         .then((response) => {
-          console.log(response.data);
           API.createAssistanceOrder(
             selectedAssistance.id,
             street,
@@ -110,6 +112,7 @@ const AssistanceAccordion = () => {
               setPopUpConfirmation(true);
               resetAssistanceRequestForm();
               setShowRequestAssistanceModal(false);
+              navigate(`${URIS.ORDERS}/${response.data.id}`);
             })
             .catch((error) => {
               setPopUpConfirmation(false);
@@ -139,6 +142,7 @@ const AssistanceAccordion = () => {
               setPopUpConfirmation(true);
               resetAssistanceRequestForm();
               setShowRequestAssistanceModal(false);
+              navigate(`${URIS.ORDERS}/${response.data.id}`);
             })
             .catch((error) => {
               setPopUpConfirmation(false);
@@ -170,7 +174,7 @@ const AssistanceAccordion = () => {
 
   const renderTitle = () => (
     <div className="row">
-      <h1 className="important-title">Assistances</h1>
+      <h1 className="important-title">Assistance</h1>
     </div>
   );
 
@@ -188,6 +192,8 @@ const AssistanceAccordion = () => {
   return (
     <div className="container">
       {renderTitle()}
+
+      {error && <LoadingError />}
 
       {!error && (
         <>
@@ -255,7 +261,6 @@ const AssistanceAccordion = () => {
         </>
       )}
 
-      {error && <LoadingError />}
       {popUpConfirmation && (
         <PopUp role="alert" text="Assistance order created successfully " />
       )}
