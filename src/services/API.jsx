@@ -39,10 +39,11 @@ const API = {
       phoneNumber,
       userId,
     }),
-  updateAssistanceOrder: (orderId, status, password) =>
+  updateAssistanceOrder: (orderId, status, kmTraveled, password) =>
     axios.put(`${baseURL}/orders`, {
       orderId,
       status,
+      kmTraveled,
       password,
     }),
   getOrder: (id) => {
