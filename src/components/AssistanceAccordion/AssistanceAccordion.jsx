@@ -299,83 +299,7 @@ const AssistanceAccordion = () => {
             </div>
           </div>
 
-          <legend>Location and Contact Information</legend>
           <div className="row g-1">
-            <div className="col-md-12">
-              <label htmlFor="street" className="form-label">
-                Street
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="street"
-                required={true}
-                value={street}
-                onChange={(e) => setStreet(e.target.value)}
-              />
-            </div>
-
-            <div className="col-md-12">
-              <label htmlFor="betweent-streets" className="form-label">
-                Between Streets
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="betweent-streets"
-                required={true}
-                value={betweenStreets}
-                onChange={(e) => setBetweenStreets(e.target.value)}
-              />
-            </div>
-
-            <div className="col-md-6">
-              <label htmlFor="city" className="form-label">
-                City
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="city"
-                required={true}
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-              />
-            </div>
-
-            <div className="col-md-6">
-              <label htmlFor="province" className="form-label">
-                Province
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="province"
-                required={true}
-                value={province}
-                onChange={(e) => setProvince(e.target.value)}
-              />
-            </div>
-
-            <div className="col-md-6">
-              <div className="phone-number">
-                <label htmlFor="phone-number" className="form-label">
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  className="form-control"
-                  id="phone-number"
-                  required={true}
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  pattern="[0-9]{10}"
-                  minLength={10}
-                  maxLength={10}
-                />
-              </div>
-            </div>
-
             <div className="col-md-12">
               <label htmlFor="select-user" className="form-label">
                 Select User:
@@ -417,6 +341,95 @@ const AssistanceAccordion = () => {
             </div>
             {!isBlockedNewUser && (
               <>
+                <div className="col-md-12">
+                  <div className="collapse" id="newUser">
+                    <legend>Location and Contact Information</legend>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="collapse" id="newUser">
+                    <label htmlFor="street" className="form-label">
+                      Street
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="street"
+                      required={true}
+                      value={street}
+                      onChange={(e) => setStreet(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-6">
+                  <div className="collapse" id="newUser">
+                    <label htmlFor="betweent-streets" className="form-label">
+                      Between Streets
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="betweent-streets"
+                      required={true}
+                      value={betweenStreets}
+                      onChange={(e) => setBetweenStreets(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-6">
+                  <div className="collapse" id="newUser">
+                    <label htmlFor="city" className="form-label">
+                      City
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="city"
+                      required={true}
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-6">
+                  <div className="collapse" id="newUser">
+                    <label htmlFor="province" className="form-label">
+                      Province
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="province"
+                      required={true}
+                      value={province}
+                      onChange={(e) => setProvince(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-6">
+                  <div className="collapse" id="newUser">
+                    <div className="phone-number">
+                      <label htmlFor="phone-number" className="form-label">
+                        Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        className="form-control"
+                        id="phone-number"
+                        required={true}
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        pattern="[0-9]{10}"
+                        minLength={10}
+                        maxLength={10}
+                      />
+                    </div>
+                  </div>
+                </div>
                 <div className="col-md-6">
                   <div className="collapse" id="newUser">
                     <label htmlFor="firstName" className="form-label">
@@ -447,21 +460,7 @@ const AssistanceAccordion = () => {
                     />
                   </div>
                 </div>
-                <div className="col-md-6">
-                  <div className="collapse" id="newUser">
-                    <label htmlFor="type" className="form-label">
-                      Type
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="type"
-                      required={true}
-                      value={type}
-                      onChange={(e) => setType(e.target.value)}
-                    />
-                  </div>
-                </div>
+
                 <div className="col-md-6">
                   <div className="collapse" id="newUser" disabled={false}>
                     <label htmlFor="mail" className="form-label">
@@ -481,25 +480,112 @@ const AssistanceAccordion = () => {
             )}
 
             {!isBlockedIdUser && (
-              <div className="col-md-12">
-                <div
-                  className="collapse"
-                  id="idUser"
-                  disabled={isBlockedIdUser}
-                >
-                  <label htmlFor="idUser" className="form-label">
-                    Id user
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="idUser"
-                    required={true}
-                    value={idUser}
-                    onChange={(e) => setIdUser(e.target.value)}
-                  />
+              <>
+                <div className="col-md-12">
+                  <div className="collapse" id="idUser">
+                    <legend>Location and Contact Information</legend>
+                  </div>
                 </div>
-              </div>
+                <div className="col-md-6">
+                  <div className="collapse" id="idUser">
+                    <label htmlFor="street" className="form-label">
+                      Street
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="street"
+                      required={true}
+                      value={street}
+                      onChange={(e) => setStreet(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="collapse" id="idUser">
+                    <label htmlFor="betweent-streets" className="form-label">
+                      Between Streets
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="betweent-streets"
+                      required={true}
+                      value={betweenStreets}
+                      onChange={(e) => setBetweenStreets(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="collapse" id="idUser">
+                    <label htmlFor="city" className="form-label">
+                      City
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="city"
+                      required={true}
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="collapse" id="idUser">
+                    <label htmlFor="province" className="form-label">
+                      Province
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="province"
+                      required={true}
+                      value={province}
+                      onChange={(e) => setProvince(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="collapse" id="idUser">
+                    <div className="phone-number">
+                      <label htmlFor="phone-number" className="form-label">
+                        Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        className="form-control"
+                        id="phone-number"
+                        required={true}
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        pattern="[0-9]{10}"
+                        minLength={10}
+                        maxLength={10}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div
+                    className="collapse"
+                    id="idUser"
+                    disabled={isBlockedIdUser}
+                  >
+                    <label htmlFor="idUser" className="form-label">
+                      Id user
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="idUser"
+                      required={true}
+                      value={idUser}
+                      onChange={(e) => setIdUser(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </>
             )}
 
             {formErrors && (
