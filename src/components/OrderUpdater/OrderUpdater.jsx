@@ -7,6 +7,7 @@ import PopUp from "../PopUp/PopUp";
 const ORDER_STATUS = {
   IN_PROGRESS: "IN_PROGRESS",
   CANCELLED: "CANCELLED",
+  COMPLETED: "COMPLETED",
 };
 
 const OrderUpdater = () => {
@@ -38,15 +39,20 @@ const OrderUpdater = () => {
     mmFilterOptions[0].value
   );
 
+  const [kmTraveled, setKmTraveled] = useState(null);
+  const [showKmTraveled, setShowKmTraveled] = useState(false);
+
   const handleStatusChange = (value) => {
     setStatus(value);
     setShowWaitingTimeInput(value === ORDER_STATUS.IN_PROGRESS);
+    setShowKmTraveled(value === ORDER_STATUS.COMPLETED);
   };
 
   const resetUpdateRequestForm = () => {
     setPassword("");
     setSelectedHhFilterOption(hhFilterOptions[0].value);
     setSelectedMmFilterOption(mmFilterOptions[0].value);
+    setKmTraveled("")
   };
 
   setTimeout(() => {
@@ -62,7 +68,7 @@ const OrderUpdater = () => {
       .then((responseOrder) => {
         API.getUser(responseOrder.data.user.id)
           .then((responseUser) => {
-            API.updateAssistanceOrder(orderId, status, password)
+            API.updateAssistanceOrder(orderId, status, kmTraveled, password)
               .then((response) => {
                 setPopUpConfirmation(true);
                 switch (status) {
@@ -99,7 +105,7 @@ const OrderUpdater = () => {
       </div>
       <div className="row d-flex justify-content-center">
         <form className="formOrder" onSubmit={requestUpdateOrder}>
-          {popUpConfirmation && <PopUp role="alert" text="Order udapted" />}
+          {popUpConfirmation && <PopUp role="alert" text="Order updated successfully" />}
 
           <div className="mb-3 row">
             <label htmlFor="orderId" className="col-sm-2 col-form-label">
@@ -188,6 +194,23 @@ const OrderUpdater = () => {
                     </option>
                   ))}
                 </select>
+              </div>
+            </div>
+          )}
+
+          {showKmTraveled && (
+            <div className="mb-3 row">
+              <label className="col-sm-2 col-form-label">Km traveled</label>
+              <div className="col-sm-5">
+                <input
+                  type="number"
+                  min={0}
+                  className="form-control"
+                  id="kmTraveled"
+                  required={true}
+                  value={kmTraveled}
+                  onChange={(e) => setKmTraveled(e.target.value)}
+                />
               </div>
             </div>
           )}
