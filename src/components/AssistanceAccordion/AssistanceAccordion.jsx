@@ -476,6 +476,21 @@ const AssistanceAccordion = () => {
                     />
                   </div>
                 </div>
+
+                <div className="col-md-6">
+                  <div className="collapse" id="newUser">
+                    <label htmlFor="type" className="form-label">
+                      Type
+                    </label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      value="CLIENT"
+                      disabled
+                      readonly
+                    />
+                  </div>
+                </div>
               </>
             )}
 
