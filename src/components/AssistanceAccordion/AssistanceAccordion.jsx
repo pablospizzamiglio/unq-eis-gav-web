@@ -1,28 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { URIS } from "../../constants";
-import API from "../../services/API";
+import API, { formatCurrency, formatUserName } from "../../services";
 import LoadingError from "../LoadingError";
 import Modal from "../Modal";
-import PopUp from "../PopUp/PopUp";
+import PopUp from "../PopUp";
 import Spinner from "../Spinner";
 import "./AssistanceAccordion.css";
-
-const formatCurrency = (currency) => {
-  let formattedCurrency = 0.0;
-  if (currency) {
-    formattedCurrency = currency;
-  }
-  return formattedCurrency.toFixed(2);
-};
-
-const formatUserName = (user) => {
-  let formattedUserName = "";
-  if (user) {
-    formattedUserName = `${user.firstName} ${user.lastName}`;
-  }
-  return formattedUserName;
-};
 
 const AssistanceAccordion = () => {
   const [assistances, setAssistances] = useState(null);
@@ -53,7 +37,6 @@ const AssistanceAccordion = () => {
   const [province, setProvince] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [type, setType] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [idUser, setIdUser] = useState("");
@@ -73,7 +56,6 @@ const AssistanceAccordion = () => {
     setProvince("");
     setFirstName("");
     setLastName("");
-    setType("");
     setPhoneNumber("");
     setEmail("");
     setIsBlockedIdUser(false);
@@ -506,11 +488,11 @@ const AssistanceAccordion = () => {
                       Type
                     </label>
                     <input
-                      class="form-control"
+                      className="form-control"
                       type="text"
                       value="CLIENT"
                       disabled
-                      readonly
+                      readOnly
                     />
                   </div>
                 </div>
