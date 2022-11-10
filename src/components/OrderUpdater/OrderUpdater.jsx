@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { URIS } from "../../constants";
-import API from "../../services/API";
-import PopUp from "../PopUp/PopUp";
+import API, { formatCurrency } from "../../services";
+import PopUp from "../PopUp";
+import Spinner from "../Spinner";
 
 const ORDER_STATUS = {
   IN_PROGRESS: "IN_PROGRESS",
@@ -10,8 +11,20 @@ const ORDER_STATUS = {
   COMPLETED: "COMPLETED",
 };
 
+const parseNumber = (value) => {
+  let numberValue = null;
+  let parsedValue = Number(value);
+  if (!isNaN(parsedValue)) {
+    numberValue = parsedValue;
+  }
+  return numberValue;
+};
+
 const OrderUpdater = () => {
   const { orderId } = useParams();
+  const [order, setOrder] = useState([]);
+  const [error, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [status, setStatus] = useState("");
   const [password, setPassword] = useState("");
   const [formErrors, setFormErrors] = useState("");
@@ -42,17 +55,18 @@ const OrderUpdater = () => {
   const [kmTraveled, setKmTraveled] = useState(null);
   const [showKmTraveled, setShowKmTraveled] = useState(false);
 
-  const handleStatusChange = (value) => {
-    setStatus(value);
-    setShowWaitingTimeInput(value === ORDER_STATUS.IN_PROGRESS);
-    setShowKmTraveled(value === ORDER_STATUS.COMPLETED);
-  };
-
   const resetUpdateRequestForm = () => {
     setPassword("");
     setSelectedHhFilterOption(hhFilterOptions[0].value);
     setSelectedMmFilterOption(mmFilterOptions[0].value);
-    setKmTraveled("")
+    setKmTraveled(null);
+  };
+
+  const handleStatusChange = (value) => {
+    setStatus(value);
+    setShowWaitingTimeInput(value === ORDER_STATUS.IN_PROGRESS);
+    setShowKmTraveled(value === ORDER_STATUS.COMPLETED);
+    resetUpdateRequestForm();
   };
 
   setTimeout(() => {
@@ -69,7 +83,7 @@ const OrderUpdater = () => {
         API.getUser(responseOrder.data.user.id)
           .then((responseUser) => {
             API.updateAssistanceOrder(orderId, status, kmTraveled, password)
-              .then((response) => {
+              .then((_response) => {
                 setPopUpConfirmation(true);
                 switch (status) {
                   case ORDER_STATUS.IN_PROGRESS:
@@ -98,14 +112,53 @@ const OrderUpdater = () => {
       });
   };
 
+  useEffect(() => {
+    API.getOrder(orderId)
+      .then((response) => {
+        setOrder(response.data);
+      })
+      .catch((error) => {
+        setError(true);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [orderId]);
+
+  const renderTitle = () => (
+    <div className="row">
+      <h1 className="important-title">Order Updater</h1>
+    </div>
+  );
+
+  if (isLoading) {
+    return (
+      <>
+        {renderTitle()}
+        <div className="container py-4">
+          <Spinner fullscreen={false} />
+        </div>
+      </>
+    );
+  }
+
   return (
     <div className="container">
-      <div className="row">
-        <h1 className="important-title">Order Updater</h1>
-      </div>
+      {renderTitle()}
+
+      {formErrors && (
+        <div className="row">
+          <div className="alert alert-danger text-center" role="alert">
+            {formErrors}
+          </div>
+        </div>
+      )}
+
       <div className="row d-flex justify-content-center">
         <form className="formOrder" onSubmit={requestUpdateOrder}>
-          {popUpConfirmation && <PopUp role="alert" text="Order updated successfully" />}
+          {popUpConfirmation && (
+            <PopUp role="alert" text="Order updated successfully" />
+          )}
 
           <div className="mb-3 row">
             <label htmlFor="orderId" className="col-sm-2 col-form-label">
@@ -121,6 +174,29 @@ const OrderUpdater = () => {
                 disabled
                 readOnly
               />
+            </div>
+          </div>
+
+          <div className="mb-3 row">
+            <label
+              htmlFor="cancellationCost"
+              className="col-sm-2 col-form-label"
+            >
+              Cancellation Cost
+            </label>
+            <div className="col-sm-10">
+              <div className="input-group">
+                <span className="input-group-text">$</span>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="cancellationCost"
+                  required={true}
+                  value={formatCurrency(order.cancellationCost)}
+                  disabled
+                  readOnly
+                />
+              </div>
             </div>
           </div>
 
@@ -208,8 +284,8 @@ const OrderUpdater = () => {
                   className="form-control"
                   id="kmTraveled"
                   required={true}
-                  value={kmTraveled}
-                  onChange={(e) => setKmTraveled(e.target.value)}
+                  value={kmTraveled ?? ""}
+                  onChange={(e) => setKmTraveled(parseNumber(e.target.value))}
                 />
               </div>
             </div>
@@ -232,14 +308,6 @@ const OrderUpdater = () => {
               />
             </div>
           </div>
-
-          {formErrors && (
-            <div className="col-md-12 pt-2">
-              <div className="alert alert-danger" role="alert">
-                {formErrors}
-              </div>
-            </div>
-          )}
 
           <Link className="btn btn-secondary me-3" to={`${URIS.ORDERS}`}>
             Go Back
