@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { URIS } from "../../constants";
-import API from "../../services/API";
+import API, { formatCurrency, formatUserName } from "../../services";
 import Spinner from "../Spinner";
 
 const Order = () => {
@@ -47,7 +47,7 @@ const Order = () => {
       </div>
 
       <div className="row">
-        <div class="alert alert-success text-center" role="alert">
+        <div className="alert alert-success text-center" role="alert">
           Assistance order created successfully
         </div>
       </div>
@@ -81,7 +81,7 @@ const Order = () => {
                 className="form-control"
                 id="assistance"
                 required={true}
-                value={`${order.assistance.user.firstName} ${order.assistance.user.lastName}`}
+                value={formatUserName(order.assistance.user)}
                 disabled
                 readOnly
               />
@@ -100,7 +100,7 @@ const Order = () => {
                   className="form-control"
                   id="costPerKm"
                   required={true}
-                  value={order.costPerKm}
+                  value={formatCurrency(order.costPerKm)}
                   disabled
                   readOnly
                 />
@@ -120,7 +120,30 @@ const Order = () => {
                   className="form-control"
                   id="fixedCost"
                   required={true}
-                  value={order.fixedCost}
+                  value={formatCurrency(order.fixedCost)}
+                  disabled
+                  readOnly
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-3 row">
+            <label
+              htmlFor="cancellationCost"
+              className="col-sm-2 col-form-label"
+            >
+              Cancellation Cost
+            </label>
+            <div className="col-sm-10">
+              <div className="input-group">
+                <span className="input-group-text">$</span>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="cancellationCost"
+                  required={true}
+                  value={formatCurrency(order.cancellationCost)}
                   disabled
                   readOnly
                 />

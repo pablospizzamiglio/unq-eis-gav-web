@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { URIS } from "../../constants";
-import API from "../../services/API";
+import API, { formatCurrency, formatUserName } from "../../services";
 import LoadingError from "../LoadingError";
 import Modal from "../Modal";
-import PopUp from "../PopUp/PopUp";
+import PopUp from "../PopUp";
 import Spinner from "../Spinner";
 import "./AssistanceAccordion.css";
 
@@ -28,10 +28,6 @@ const AssistanceAccordion = () => {
   const [showRequestAssistanceModal, setShowRequestAssistanceModal] =
     useState(false);
   const [selectedAssistance, setSelectedAssistance] = useState(null);
-  const [nameAssistance, setNameAssistance] = useState("");
-  const [phoneNumberAssistance, setPhoneNumberAssistance] = useState("");
-  const [fixedCostAssistance, setFixedCostAssistance] = useState("");
-  const [costPerKmAssistance, setCostPerKmAssistance] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isBlockedIdUser, setIsBlockedIdUser] = useState(false);
   const [isBlockedNewUser, setIsBlockedNewUser] = useState(false);
@@ -41,7 +37,6 @@ const AssistanceAccordion = () => {
   const [province, setProvince] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [type, setType] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [idUser, setIdUser] = useState("");
@@ -55,17 +50,12 @@ const AssistanceAccordion = () => {
     setFormErrors("");
     setSelectedAssistance(null);
     setIdUser("");
-    setNameAssistance("");
-    setPhoneNumberAssistance("");
-    setFixedCostAssistance("");
-    setCostPerKmAssistance("");
     setStreet("");
     setBetweenStreets("");
     setCity("");
     setProvince("");
     setFirstName("");
     setLastName("");
-    setType("");
     setPhoneNumber("");
     setEmail("");
     setIsBlockedIdUser(false);
@@ -79,12 +69,6 @@ const AssistanceAccordion = () => {
   const openRequestAssistanceModal = (assistance) => {
     setSelectedAssistance(assistance);
     setPopUpConfirmation(false);
-    setNameAssistance(
-      `${assistance.assistant.firstName} ${assistance.assistant.lastName}`
-    );
-    setPhoneNumberAssistance(assistance.assistant.telephoneNumber);
-    setFixedCostAssistance(assistance.fixedCost.toFixed(2));
-    setCostPerKmAssistance(assistance.costPerKm.toFixed(2));
     setShowRequestAssistanceModal(true);
   };
 
@@ -97,7 +81,7 @@ const AssistanceAccordion = () => {
     event.preventDefault();
     setIsSubmitting(true);
     if (!isBlockedNewUser) {
-      API.createUser(firstName, lastName, type, email, phoneNumber)
+      API.createUser(firstName, lastName, "CLIENT", email, phoneNumber)
         .then((response) => {
           API.createAssistanceOrder(
             selectedAssistance.id,
@@ -235,12 +219,17 @@ const AssistanceAccordion = () => {
                       <h4 className="capitalize">
                         Kind: {assistance.kind.toLowerCase()}
                       </h4>
-                      <h4>Fixed Cost: ${assistance.fixedCost.toFixed(2)}</h4>
-                      <h4>Cost Per Km: ${assistance.costPerKm.toFixed(2)}</h4>
                       <h4>
-                        User: {assistance.assistant.firstName}{" "}
-                        {assistance.assistant.lastName}
+                        Fixed Cost: ${formatCurrency(assistance.fixedCost)}
                       </h4>
+                      <h4>
+                        Cost Per Km: ${formatCurrency(assistance.costPerKm)}
+                      </h4>
+                      <h4>
+                        Cancellation Cost: $
+                        {formatCurrency(assistance.cancellationCost)}
+                      </h4>
+                      <h4>User: {formatUserName(assistance.assistant)}</h4>
                       <button
                         type="button"
                         className="btn btn-primary"
@@ -276,25 +265,41 @@ const AssistanceAccordion = () => {
           <div className="row g-1">
             <div className="col-md-6">
               <label htmlFor="name" className="form-label">
-                <h5>Assistant: {nameAssistance}</h5>
+                <h5>
+                  Assistant: {formatUserName(selectedAssistance?.assistant)}
+                </h5>
               </label>
             </div>
 
             <div className="col-md-6">
               <label htmlFor="phoneNumber" className="form-label">
-                <h5>Phone number: {phoneNumberAssistance}</h5>
+                <h5>Phone number: {selectedAssistance?.phoneNumber ?? ""}</h5>
               </label>
             </div>
 
             <div className="col-md-6">
               <label htmlFor="fixedCost" className="form-label">
-                <h5>Fixed Cost: ${fixedCostAssistance}</h5>
+                <h5>
+                  Fixed Cost: ${formatCurrency(selectedAssistance?.fixedCost)}
+                </h5>
               </label>
             </div>
 
             <div className="col-md-6">
               <label htmlFor="costPerKm" className="form-label">
-                <h5>Cost per Km: ${costPerKmAssistance}</h5>
+                <h5>
+                  Cost per Km: $
+                  {formatCurrency(selectedAssistance?.costPerKmAssistance)}
+                </h5>
+              </label>
+            </div>
+
+            <div className="col-md-6">
+              <label htmlFor="costPerKm" className="form-label">
+                <h5>
+                  Cancellation Cost: $
+                  {formatCurrency(selectedAssistance?.cancellationCost)}
+                </h5>
               </label>
             </div>
           </div>
@@ -483,11 +488,11 @@ const AssistanceAccordion = () => {
                       Type
                     </label>
                     <input
-                      class="form-control"
+                      className="form-control"
                       type="text"
                       value="CLIENT"
                       disabled
-                      readonly
+                      readOnly
                     />
                   </div>
                 </div>
