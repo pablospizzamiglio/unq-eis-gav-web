@@ -56,6 +56,12 @@ const API = {
       return axios.get(`${baseURL}/orders?status=${status.join(",")}`);
     }
   },
+  updateScoreAssistance: (orderId, userId, score) =>
+    axios.put(`${baseURL}/score`, {
+      orderId,
+      userId,
+      score,
+    }),
 };
 
 export default API;
