@@ -38,6 +38,11 @@ const Navbar = () => {
                 Order Tracker
               </Link>
             </li>
+            <li className="nav-item">
+              <Link to={`${URIS.CANCELLED_COMPLETED}`} className="navbar-brand text-black">
+                Order Completed or Cancelled 
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

@@ -7,6 +7,7 @@ import Home from "./components/Home";
 import Navbar from "./components/Navbar/Navbar";
 import NotFound from "./components/NotFound";
 import Order from "./components/Order/Order";
+import AssistanceScore from "./components/AssistanceScore";
 import OrdersList from "./components/OrdersList/OrdersList";
 import OrderUpdater from "./components/OrderUpdater/OrderUpdater";
 import { URIS } from "./constants";
@@ -23,12 +24,30 @@ const App = () => {
             <Route
               path={URIS.ORDERS}
               element={
-                <OrdersList status={["PENDING_APPROVAL", "IN_PROGRESS"]} />
+                <OrdersList
+                  status={["PENDING_APPROVAL", "IN_PROGRESS"]}
+                  title={"Order Tracker"}
+                  link={URIS.ORDER_UPDATER}
+                />
+              }
+            />
+            <Route
+              path={URIS.CANCELLED_COMPLETED}
+              element={
+                <OrdersList
+                  status={["CANCELLED", "COMPLETED"]}
+                  title={"Completed or Cancelled orders"}
+                  link={URIS.ASSISTANCE_SCORE}
+                />
               }
             />
             <Route
               path={`${URIS.ORDER_UPDATER}/:orderId`}
               element={<OrderUpdater />}
+            />
+            <Route
+              path={`${URIS.ASSISTANCE_SCORE}/:orderId`}
+              element={<AssistanceScore />}
             />
             <Route path={`${URIS.ORDERS}/:orderId`} element={<Order />} />
             <Route path="*" element={<NotFound />} />

@@ -4,7 +4,7 @@ import API from "../../services/API";
 import LoadingError from "../LoadingError";
 import Spinner from "../Spinner";
 
-const OrdersList = ({ status }) => {
+const OrdersList = ({ status, title, link }) => {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +24,7 @@ const OrdersList = ({ status }) => {
 
   const renderTitle = () => (
     <div className="row">
-      <h1 className="important-title">Order Tracker</h1>
+      <h1 className="important-title">{title}</h1>
     </div>
   );
 
@@ -66,9 +66,7 @@ const OrdersList = ({ status }) => {
                   orders.result.map((order, i) => (
                     <tr key={i}>
                       <th scope="row">
-                        <Link to={`/order-updater/${order.id}`}>
-                          {order.id}
-                        </Link>
+                        <Link to={`${link}/${order.id}`}>{order.id}</Link>
                       </th>
                       <td>{`${order.assistance.user.firstName} ${order.assistance.user.lastName}`}</td>
                       <td>{order.status.replaceAll("_", " ")}</td>
