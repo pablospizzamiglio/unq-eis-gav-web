@@ -1,5 +1,5 @@
 import API from "./API";
-import { formatCurrency, formatUserName } from "./formatters";
+import { formatCurrency, formatUserName ,formatKmTraveled } from "./formatters";
 
 export default API;
-export { formatCurrency, formatUserName };
+export { formatCurrency, formatUserName,formatKmTraveled };

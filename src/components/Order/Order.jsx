@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { URIS } from "../../constants";
-import API, { formatCurrency, formatUserName } from "../../services";
+import API, {
+  formatCurrency,
+  formatUserName,
+  formatKmTraveled,
+} from "../../services";
 import Spinner from "../Spinner";
 
 const Order = () => {
@@ -144,6 +148,28 @@ const Order = () => {
                   id="cancellationCost"
                   required={true}
                   value={formatCurrency(order.cancellationCost)}
+                  disabled
+                  readOnly
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-3 row">
+            <label
+              htmlFor="cancellationCost"
+              className="col-sm-2 col-form-label"
+            >
+              Traveled Kilometers
+            </label>
+            <div className="col-sm-10">
+              <div className="input-group">
+                <input
+                  type="text"
+                  className="form-control"
+                  id="kmTraveled"
+                  required={true}
+                  value={formatKmTraveled(order.assistance.kmTraveled)}
                   disabled
                   readOnly
                 />
