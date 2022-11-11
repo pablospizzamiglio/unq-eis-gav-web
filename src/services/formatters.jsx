@@ -13,3 +13,13 @@ export const formatUserName = (user) => {
   }
   return formattedUserName;
 };
+
+export const formatKmTraveled = (kmTraveled) => {
+  let formattedKmTraveled = "";
+  if (kmTraveled == null) {
+    formattedKmTraveled = "null";
+  } else {
+    formattedKmTraveled = kmTraveled;
+  }
+  return formattedKmTraveled;
+};
