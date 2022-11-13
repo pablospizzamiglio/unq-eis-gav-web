@@ -42,261 +42,194 @@ const Order = () => {
 
   return (
     <div className="container">
-      <div className="row">
-        <h1 className="important-title">Order Details</h1>
+      <div className="row mb-3">
+        <h1 className="important-title">Order Detail</h1>
       </div>
 
       <div className="row">
         <div className="alert alert-success text-center" role="alert">
-          Assistance order created successfully
+          Order created successfully
         </div>
       </div>
 
-      <div className="row d-flex justify-content-center">
-        <form>
-          <div className="mb-3 row">
-            <label htmlFor="orderId" className="col-sm-2 col-form-label">
-              Order Id
-            </label>
-            <div className="col-sm-10">
-              <input
-                type="text"
-                className="form-control"
-                id="orderId"
-                required={true}
-                value={order.id}
-                disabled
-                readOnly
-              />
-            </div>
-          </div>
+      <form className="row">
+        <fieldset className="row g-2">
+          <legend>User: {formatUserName(order.user)}</legend>
 
-          <div className="mb-3 row">
-            <label htmlFor="assistance" className="col-sm-2 col-form-label">
-              Assistance
-            </label>
-            <div className="col-sm-10">
-              <input
-                type="text"
-                className="form-control"
-                id="assistance"
-                required={true}
-                value={formatUserName(order.assistance.user)}
-                disabled
-                readOnly
-              />
-            </div>
-          </div>
-
-          <div className="mb-3 row">
-            <label htmlFor="costPerKm" className="col-sm-2 col-form-label">
-              Cost Per Km
-            </label>
-            <div className="col-sm-10">
-              <div className="input-group">
-                <span className="input-group-text">$</span>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="costPerKm"
-                  required={true}
-                  value={formatDecimalNumber(order.costPerKm)}
-                  disabled
-                  readOnly
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="mb-3 row">
-            <label htmlFor="fixedCost" className="col-sm-2 col-form-label">
-              Fixed Cost
-            </label>
-            <div className="col-sm-10">
-              <div className="input-group">
-                <span className="input-group-text">$</span>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="fixedCost"
-                  required={true}
-                  value={formatDecimalNumber(order.fixedCost)}
-                  disabled
-                  readOnly
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="mb-3 row">
-            <label
-              htmlFor="cancellationCost"
-              className="col-sm-2 col-form-label"
-            >
-              Cancellation Cost
-            </label>
-            <div className="col-sm-10">
-              <div className="input-group">
-                <span className="input-group-text">$</span>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="cancellationCost"
-                  required={true}
-                  value={formatDecimalNumber(order.cancellationCost)}
-                  disabled
-                  readOnly
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="mb-3 row">
-            <label
-              htmlFor="cancellationCost"
-              className="col-sm-2 col-form-label"
-            >
-              Traveled Kilometers
-            </label>
-            <div className="col-sm-10">
-              <div className="input-group">
-                <input
-                  type="text"
-                  className="form-control"
-                  id="kmTraveled"
-                  required={true}
-                  value={formatDecimalNumber(order.assistance.kmTraveled)}
-                  disabled
-                  readOnly
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="mb-3 row">
-            <label htmlFor="status" className="col-sm-2 col-form-label">
-              Status
-            </label>
-            <div className="col-sm-10">
-              <input
-                type="text"
-                className="form-control"
-                id="status"
-                required={true}
-                value={order.status.replaceAll("_", " ")}
-                disabled
-                readOnly
-              />
-            </div>
-          </div>
-
-          <div className="mb-3 row">
-            <label htmlFor="street" className="col-sm-2 col-form-label">
-              Street
-            </label>
-            <div className="col-sm-10">
-              <input
-                type="text"
-                className="form-control"
-                id="street"
-                required={true}
-                value={order.street}
-                disabled
-                readOnly
-              />
-            </div>
-          </div>
-
-          <div className="mb-3 row">
-            <label htmlFor="betweenStreets" className="col-sm-2 col-form-label">
-              Between Streets
-            </label>
-            <div className="col-sm-10">
-              <input
-                type="text"
-                className="form-control"
-                id="betweenStreets"
-                required={true}
-                value={order.betweenStreets}
-                disabled
-                readOnly
-              />
-            </div>
-          </div>
-
-          <div className="mb-3 row">
-            <label htmlFor="city" className="col-sm-2 col-form-label">
-              City
-            </label>
-            <div className="col-sm-10">
-              <input
-                type="text"
-                className="form-control"
-                id="city"
-                required={true}
-                value={order.city}
-                disabled
-                readOnly
-              />
-            </div>
-          </div>
-
-          <div className="mb-3 row">
-            <label htmlFor="province" className="col-sm-2 col-form-label">
-              Province
-            </label>
-            <div className="col-sm-10">
-              <input
-                type="text"
-                className="form-control"
-                id="province"
-                required={true}
-                value={order.province}
-                disabled
-                readOnly
-              />
-            </div>
-          </div>
-
-          <div className="mb-3 row">
-            <label htmlFor="phoneNumber" className="col-sm-2 col-form-label">
+          <div className="col-md-12">
+            <label htmlFor="phoneNumber" className="form-label">
               Phone Number
             </label>
-            <div className="col-sm-10">
-              <input
-                type="text"
-                className="form-control"
-                id="phoneNumber"
-                required={true}
-                value={order.phoneNumber}
-                disabled
-                readOnly
-              />
-            </div>
+            <input
+              type="text"
+              className="form-control"
+              id="phoneNumber"
+              required={true}
+              value={order.phoneNumber}
+              disabled
+              readOnly
+            />
           </div>
 
-          <div className="mb-3 row">
-            <label htmlFor="user" className="col-sm-2 col-form-label">
-              User
+          <div className="col-md-6">
+            <label htmlFor="street" className="form-label">
+              Street
             </label>
-            <div className="col-sm-10">
+            <input
+              type="text"
+              className="form-control"
+              id="street"
+              required={true}
+              value={order.street}
+              disabled
+              readOnly
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label htmlFor="betweenStreets" className="form-label">
+              Between Streets
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="betweenStreets"
+              required={true}
+              value={order.betweenStreets}
+              disabled
+              readOnly
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label htmlFor="city" className="form-label">
+              City
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="city"
+              required={true}
+              value={order.city}
+              disabled
+              readOnly
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label htmlFor="province" className="form-label">
+              Province
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="province"
+              required={true}
+              value={order.province}
+              disabled
+              readOnly
+            />
+          </div>
+        </fieldset>
+
+        <fieldset className="row g-2">
+          <legend>Assistance: {formatUserName(order.assistance.user)}</legend>
+
+          <div className="col-md-4">
+            <label htmlFor="costPerKm" className="form-label">
+              Cost Per Km
+            </label>
+            <div className="input-group">
+              <span className="input-group-text">$</span>
               <input
                 type="text"
                 className="form-control"
-                id="user"
+                id="costPerKm"
                 required={true}
-                value={`${order.user.firstName} ${order.user.lastName}`}
+                value={formatDecimalNumber(order.costPerKm)}
                 disabled
                 readOnly
               />
             </div>
           </div>
 
-          <Link className="btn btn-secondary me-3" to={`${URIS.ASSISTANCE}`}>
-            Go Back
-          </Link>
-        </form>
-      </div>
+          <div className="col-md-4">
+            <label htmlFor="fixedCost" className="form-label">
+              Fixed Cost
+            </label>
+            <div className="input-group">
+              <span className="input-group-text">$</span>
+              <input
+                type="text"
+                className="form-control"
+                id="fixedCost"
+                required={true}
+                value={formatDecimalNumber(order.fixedCost)}
+                disabled
+                readOnly
+              />
+            </div>
+          </div>
+
+          <div className="col-md-4">
+            <label htmlFor="cancellationCost" className="form-label">
+              Cancellation Cost
+            </label>
+            <div className="input-group">
+              <span className="input-group-text">$</span>
+              <input
+                type="text"
+                className="form-control"
+                id="cancellationCost"
+                required={true}
+                value={formatDecimalNumber(order.cancellationCost)}
+                disabled
+                readOnly
+              />
+            </div>
+          </div>
+
+          <div className="col-md-6">
+            <label htmlFor="status" className="form-label">
+              Status
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="status"
+              required={true}
+              value={order.status.replaceAll("_", " ")}
+              disabled
+              readOnly
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label htmlFor="cancellationCost" className="form-label">
+              Traveled Kilometers
+            </label>
+            <div className="input-group">
+              <input
+                type="text"
+                className="form-control"
+                id="kmTraveled"
+                required={true}
+                value={formatDecimalNumber(order.assistance.kmTraveled)}
+                disabled
+                readOnly
+              />
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset className="row g-2">
+          <div>
+            <Link className="btn btn-secondary" to={`${URIS.ASSISTANCE}`}>
+              Go Back
+            </Link>
+          </div>
+        </fieldset>
+      </form>
     </div>
   );
 };

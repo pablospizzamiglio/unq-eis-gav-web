@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { URIS } from "../../constants";
-import API, { formatDecimalNumber } from "../../services";
+import API, { formatDecimalNumber, formatUserName } from "../../services";
 import PopUp from "../PopUp";
 import Spinner from "../Spinner";
 
@@ -161,19 +161,161 @@ const OrderUpdater = () => {
           )}
 
           <div className="mb-3 row">
-            <label htmlFor="orderId" className="col-sm-2 col-form-label">
-              Order Id
+            <label htmlFor="user" className="col-sm-2 col-form-label">
+              User
             </label>
             <div className="col-sm-10">
               <input
                 type="text"
                 className="form-control"
-                id="orderId"
+                id="user"
                 required={true}
-                value={orderId}
+                value={`${order.user.firstName} ${order.user.lastName}`}
                 disabled
                 readOnly
               />
+            </div>
+          </div>
+
+          <div className="mb-3 row">
+            <label htmlFor="street" className="col-sm-2 col-form-label">
+              Street
+            </label>
+            <div className="col-sm-10">
+              <input
+                type="text"
+                className="form-control"
+                id="street"
+                required={true}
+                value={order.street}
+                disabled
+                readOnly
+              />
+            </div>
+          </div>
+
+          <div className="mb-3 row">
+            <label htmlFor="betweenStreets" className="col-sm-2 col-form-label">
+              Between Streets
+            </label>
+            <div className="col-sm-10">
+              <input
+                type="text"
+                className="form-control"
+                id="betweenStreets"
+                required={true}
+                value={order.betweenStreets}
+                disabled
+                readOnly
+              />
+            </div>
+          </div>
+
+          <div className="mb-3 row">
+            <label htmlFor="city" className="col-sm-2 col-form-label">
+              City
+            </label>
+            <div className="col-sm-10">
+              <input
+                type="text"
+                className="form-control"
+                id="city"
+                required={true}
+                value={order.city}
+                disabled
+                readOnly
+              />
+            </div>
+          </div>
+
+          <div className="mb-3 row">
+            <label htmlFor="province" className="col-sm-2 col-form-label">
+              Province
+            </label>
+            <div className="col-sm-10">
+              <input
+                type="text"
+                className="form-control"
+                id="province"
+                required={true}
+                value={order.province}
+                disabled
+                readOnly
+              />
+            </div>
+          </div>
+
+          <div className="mb-3 row">
+            <label htmlFor="phoneNumber" className="col-sm-2 col-form-label">
+              Phone Number
+            </label>
+            <div className="col-sm-10">
+              <input
+                type="text"
+                className="form-control"
+                id="phoneNumber"
+                required={true}
+                value={order.phoneNumber}
+                disabled
+                readOnly
+              />
+            </div>
+          </div>
+
+          <div className="mb-3 row">
+            <label htmlFor="assistance" className="col-sm-2 col-form-label">
+              Assistance
+            </label>
+            <div className="col-sm-10">
+              <input
+                type="text"
+                className="form-control"
+                id="assistance"
+                required={true}
+                value={formatUserName(order.assistance.user)}
+                disabled
+                readOnly
+              />
+            </div>
+          </div>
+
+          <div className="mb-3 row">
+            <label htmlFor="costPerKm" className="col-sm-2 col-form-label">
+              Cost Per Km
+            </label>
+            <div className="col-sm-10">
+              <div className="input-group">
+                <span className="input-group-text">$</span>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="costPerKm"
+                  required={true}
+                  value={formatDecimalNumber(order.costPerKm)}
+                  disabled
+                  readOnly
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-3 row">
+            <label htmlFor="fixedCost" className="col-sm-2 col-form-label">
+              Fixed Cost
+            </label>
+            <div className="col-sm-10">
+              <div className="input-group">
+                <span className="input-group-text">$</span>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="fixedCost"
+                  required={true}
+                  value={formatDecimalNumber(order.fixedCost)}
+                  disabled
+                  readOnly
+                />
+              </div>
             </div>
           </div>
 
