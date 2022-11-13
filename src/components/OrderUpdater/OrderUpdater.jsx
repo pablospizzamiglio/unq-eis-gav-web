@@ -281,6 +281,7 @@ const OrderUpdater = () => {
                 <input
                   type="number"
                   min={0}
+                  step={0.01}
                   className="form-control"
                   id="kmTraveled"
                   required={true}
