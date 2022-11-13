@@ -48,10 +48,10 @@ const OrdersList = ({ status, title, link }) => {
       {!error && (
         <>
           <div className="row">
-            <table className="table">
+            <table className="table align-middle">
               <thead>
                 <tr>
-                  <th scope="col">Order ID</th>
+                  <th scope="col"></th>
                   <th scope="col">Assistance</th>
                   <th scope="col">Status</th>
                   <th scope="col">Street</th>
@@ -66,7 +66,12 @@ const OrdersList = ({ status, title, link }) => {
                   orders.result.map((order, i) => (
                     <tr key={i}>
                       <th scope="row">
-                        <Link to={`${link}/${order.id}`}>{order.id}</Link>
+                        <Link
+                          to={`${link}/${order.id}`}
+                          className="btn btn-primary btn-sm"
+                        >
+                          Manage
+                        </Link>
                       </th>
                       <td>{`${order.assistance.user.firstName} ${order.assistance.user.lastName}`}</td>
                       <td>{order.status.replaceAll("_", " ")}</td>
