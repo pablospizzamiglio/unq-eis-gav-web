@@ -13,3 +13,11 @@ export const formatUserName = (user) => {
   }
   return formattedUserName;
 };
+
+export const formatOrderStatus = (status) => {
+  let formattedOrderStatus = "";
+  if (status) {
+    formattedOrderStatus = status.replaceAll("_", " ");
+  }
+  return formattedOrderStatus;
+};

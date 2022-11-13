@@ -1,5 +1,9 @@
 import API from "./API";
-import { formatDecimalNumber, formatUserName } from "./formatters";
+import {
+  formatDecimalNumber,
+  formatOrderStatus,
+  formatUserName,
+} from "./formatters";
 
 export default API;
-export { formatDecimalNumber, formatUserName };
+export { formatDecimalNumber, formatUserName, formatOrderStatus };
