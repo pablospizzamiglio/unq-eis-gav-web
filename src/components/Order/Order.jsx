@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { URIS } from "../../constants";
-import API, {
-  formatCurrency,
-  formatUserName,
-  formatKmTraveled,
-} from "../../services";
+import API, { formatDecimalNumber, formatUserName } from "../../services";
 import Spinner from "../Spinner";
 
 const Order = () => {
@@ -104,7 +100,7 @@ const Order = () => {
                   className="form-control"
                   id="costPerKm"
                   required={true}
-                  value={formatCurrency(order.costPerKm)}
+                  value={formatDecimalNumber(order.costPerKm)}
                   disabled
                   readOnly
                 />
@@ -124,7 +120,7 @@ const Order = () => {
                   className="form-control"
                   id="fixedCost"
                   required={true}
-                  value={formatCurrency(order.fixedCost)}
+                  value={formatDecimalNumber(order.fixedCost)}
                   disabled
                   readOnly
                 />
@@ -147,7 +143,7 @@ const Order = () => {
                   className="form-control"
                   id="cancellationCost"
                   required={true}
-                  value={formatCurrency(order.cancellationCost)}
+                  value={formatDecimalNumber(order.cancellationCost)}
                   disabled
                   readOnly
                 />
@@ -169,7 +165,7 @@ const Order = () => {
                   className="form-control"
                   id="kmTraveled"
                   required={true}
-                  value={formatKmTraveled(order.assistance.kmTraveled)}
+                  value={formatDecimalNumber(order.assistance.kmTraveled)}
                   disabled
                   readOnly
                 />

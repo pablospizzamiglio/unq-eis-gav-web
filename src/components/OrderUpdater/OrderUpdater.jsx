@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { URIS } from "../../constants";
-import API, { formatCurrency } from "../../services";
+import API, { formatDecimalNumber } from "../../services";
 import PopUp from "../PopUp";
 import Spinner from "../Spinner";
 
@@ -192,7 +192,7 @@ const OrderUpdater = () => {
                   className="form-control"
                   id="cancellationCost"
                   required={true}
-                  value={formatCurrency(order.cancellationCost)}
+                  value={formatDecimalNumber(order.cancellationCost)}
                   disabled
                   readOnly
                 />

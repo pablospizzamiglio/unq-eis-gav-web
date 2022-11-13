@@ -1,7 +1,7 @@
-export const formatCurrency = (currency) => {
+export const formatDecimalNumber = (value) => {
   let formattedCurrency = 0.0;
-  if (currency) {
-    formattedCurrency = currency;
+  if (value) {
+    formattedCurrency = value;
   }
   return formattedCurrency.toFixed(2);
 };
@@ -12,14 +12,4 @@ export const formatUserName = (user) => {
     formattedUserName = `${user.firstName} ${user.lastName}`;
   }
   return formattedUserName;
-};
-
-export const formatKmTraveled = (kmTraveled) => {
-  let formattedKmTraveled = "";
-  if (kmTraveled == null) {
-    formattedKmTraveled = "null";
-  } else {
-    formattedKmTraveled = kmTraveled;
-  }
-  return formattedKmTraveled;
 };
