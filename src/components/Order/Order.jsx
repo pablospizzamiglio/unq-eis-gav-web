@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { URIS } from "../../constants";
-import API, { formatDecimalNumber, formatUserName } from "../../services";
+import API, {
+  formatDecimalNumber,
+  formatOrderStatus,
+  formatUserName,
+} from "../../services";
 import Spinner from "../Spinner";
 
 const Order = () => {
@@ -41,7 +45,7 @@ const Order = () => {
   }
 
   return (
-    <div className="container">
+    <div className="container py-4">
       <div className="row mb-3">
         <h1 className="important-title">Order Detail</h1>
       </div>
@@ -198,7 +202,7 @@ const Order = () => {
               className="form-control"
               id="status"
               required={true}
-              value={order.status.replaceAll("_", " ")}
+              value={formatOrderStatus(order.status)}
               disabled
               readOnly
             />

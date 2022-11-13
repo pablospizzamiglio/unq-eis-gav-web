@@ -157,7 +157,7 @@ const AssistanceAccordion = () => {
   }, [selectedKindFilterOption]);
 
   const renderTitle = () => (
-    <div className="row">
+    <div className="row mb-3">
       <h1 className="important-title">Assistance</h1>
     </div>
   );
@@ -174,7 +174,7 @@ const AssistanceAccordion = () => {
   }
 
   return (
-    <div className="container">
+    <div className="container py-4">
       {renderTitle()}
 
       {error && <LoadingError />}

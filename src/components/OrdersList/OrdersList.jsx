@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import API from "../../services/API";
+import API, { formatOrderStatus } from "../../services";
 import LoadingError from "../LoadingError";
 import Spinner from "../Spinner";
 
@@ -23,7 +23,7 @@ const OrdersList = ({ status, title, link }) => {
   }, [status]);
 
   const renderTitle = () => (
-    <div className="row">
+    <div className="row mb-3">
       <h1 className="important-title">{title}</h1>
     </div>
   );
@@ -40,7 +40,7 @@ const OrdersList = ({ status, title, link }) => {
   }
 
   return (
-    <div className="container">
+    <div className="container py-4">
       {renderTitle()}
 
       {error && <LoadingError />}
@@ -74,7 +74,7 @@ const OrdersList = ({ status, title, link }) => {
                         </Link>
                       </th>
                       <td>{`${order.assistance.user.firstName} ${order.assistance.user.lastName}`}</td>
-                      <td>{order.status.replaceAll("_", " ")}</td>
+                      <td>{formatOrderStatus(order.status)}</td>
                       <td>{order.street}</td>
                       <td>{order.city}</td>
                       <td>{order.province}</td>
