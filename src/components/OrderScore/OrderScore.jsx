@@ -8,16 +8,43 @@ import API, {
 } from "../../services";
 import Spinner from "../Spinner";
 
-const Order = () => {
+const ORDER_SCORED_SUCCESSFULY = "Order scored successfully";
+
+const OrderScore = () => {
   const { orderId } = useParams();
   const [order, setOrder] = useState(null);
+  const [userId, setUserId] = useState("");
+  const [score, setScore] = useState("");
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [formErrors, setFormErrors] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [isFormDisabled, setIsFormDisabled] = useState(false);
+
+  const requestOrderScore = (event) => {
+    event.preventDefault();
+    setSuccessMsg("");
+    setFormErrors("");
+    API.updateOrderScore(orderId, userId, score)
+      .then((response) => {
+        let order = response.data;
+        setOrder(order);
+        setScore(order.score);
+        setIsFormDisabled(order.score > 0);
+        setSuccessMsg(ORDER_SCORED_SUCCESSFULY);
+      })
+      .catch((error) => {
+        setFormErrors(error.response.data.message);
+      });
+  };
 
   useEffect(() => {
     API.getOrder(orderId)
       .then((response) => {
-        setOrder(response.data);
+        let order = response.data;
+        setOrder(order);
+        setScore(order.score);
+        setIsFormDisabled(order.score > 0);
       })
       .catch((error) => {
         setError(true);
@@ -28,8 +55,8 @@ const Order = () => {
   }, [orderId]);
 
   const renderTitle = () => (
-    <div className="row">
-      <h1 className="important-title">Order Details</h1>
+    <div className="row mb-3">
+      <h1 className="important-title">Order Score</h1>
     </div>
   );
 
@@ -46,17 +73,23 @@ const Order = () => {
 
   return (
     <div className="container py-4">
-      <div className="row mb-3">
-        <h1 className="important-title">Order Detail</h1>
-      </div>
+      {renderTitle()}
 
       <div className="row">
-        <div className="alert alert-success text-center" role="alert">
-          Order created successfully
-        </div>
+        {formErrors && (
+          <div className="alert alert-danger text-center" role="alert">
+            {formErrors}
+          </div>
+        )}
+
+        {successMsg && (
+          <div className="alert alert-success text-center" role="alert">
+            {successMsg}
+          </div>
+        )}
       </div>
 
-      <form className="row">
+      <form className="row" onSubmit={requestOrderScore}>
         <fieldset className="row g-2">
           <legend>User: {formatUserName(order.user)}</legend>
 
@@ -212,25 +245,83 @@ const Order = () => {
             <label htmlFor="cancellationCost" className="form-label">
               Traveled Kilometers
             </label>
+            <input
+              type="text"
+              className="form-control"
+              id="kmTraveled"
+              required={true}
+              value={formatDecimalNumber(order.kmTraveled)}
+              disabled
+              readOnly
+            />
+          </div>
+
+          <div className="col-md-12">
+            <label htmlFor="totalCost" className="form-label">
+              Total Cost
+            </label>
             <div className="input-group">
+              <span className="input-group-text">$</span>
               <input
                 type="text"
                 className="form-control"
-                id="kmTraveled"
+                id="totalCost"
                 required={true}
-                value={formatDecimalNumber(order.kmTraveled)}
+                value={formatDecimalNumber(order.totalCost)}
                 disabled
                 readOnly
               />
             </div>
           </div>
+
+          <div className="col-md-6">
+            <label htmlFor="userId" className="form-label">
+              User Id
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="userId"
+              required={true}
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+              disabled={isFormDisabled}
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label htmlFor="score" className="form-label">
+              Score
+            </label>
+            <input
+              type="number"
+              min={1}
+              max={5}
+              className="form-control"
+              id="score"
+              required={true}
+              value={score}
+              onChange={(e) => setScore(e.target.value)}
+              disabled={isFormDisabled}
+            />
+          </div>
         </fieldset>
 
         <fieldset className="row g-2">
           <div>
-            <Link className="btn btn-secondary" to={`${URIS.ASSISTANCE}`}>
+            <Link
+              className="btn btn-secondary me-3"
+              to={`${URIS.CANCELLED_COMPLETED}`}
+            >
               Go Back
             </Link>
+            <button
+              className="btn btn-primary"
+              type="submit"
+              disabled={isFormDisabled}
+            >
+              Update
+            </button>
           </div>
         </fieldset>
       </form>
@@ -238,4 +329,4 @@ const Order = () => {
   );
 };
 
-export default Order;
+export default OrderScore;

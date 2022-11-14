@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { URIS } from "../../constants";
-import API, { formatCurrency, formatUserName } from "../../services";
+import API, { formatDecimalNumber, formatUserName } from "../../services";
 import LoadingError from "../LoadingError";
 import Modal from "../Modal";
 import PopUp from "../PopUp";
@@ -83,7 +83,7 @@ const AssistanceAccordion = () => {
     if (!isBlockedNewUser) {
       API.createUser(firstName, lastName, "CLIENT", email, phoneNumber)
         .then((response) => {
-          API.createAssistanceOrder(
+          API.createOrder(
             selectedAssistance.id,
             street,
             betweenStreets,
@@ -113,7 +113,7 @@ const AssistanceAccordion = () => {
     } else {
       API.getUser(idUser)
         .then((response) => {
-          API.createAssistanceOrder(
+          API.createOrder(
             selectedAssistance.id,
             street,
             betweenStreets,
@@ -157,7 +157,7 @@ const AssistanceAccordion = () => {
   }, [selectedKindFilterOption]);
 
   const renderTitle = () => (
-    <div className="row">
+    <div className="row mb-3">
       <h1 className="important-title">Assistance</h1>
     </div>
   );
@@ -174,7 +174,7 @@ const AssistanceAccordion = () => {
   }
 
   return (
-    <div className="container">
+    <div className="container py-4">
       {renderTitle()}
 
       {error && <LoadingError />}
@@ -225,14 +225,15 @@ const AssistanceAccordion = () => {
                         Kind: {assistance.kind.toLowerCase()}
                       </h4>
                       <h4>
-                        Fixed Cost: ${formatCurrency(assistance.fixedCost)}
+                        Fixed Cost: ${formatDecimalNumber(assistance.fixedCost)}
                       </h4>
                       <h4>
-                        Cost Per Km: ${formatCurrency(assistance.costPerKm)}
+                        Cost Per Km: $
+                        {formatDecimalNumber(assistance.costPerKm)}
                       </h4>
                       <h4>
                         Cancellation Cost: $
-                        {formatCurrency(assistance.cancellationCost)}
+                        {formatDecimalNumber(assistance.cancellationCost)}
                       </h4>
 
                       <button
@@ -285,7 +286,8 @@ const AssistanceAccordion = () => {
             <div className="col-md-6">
               <label htmlFor="fixedCost" className="form-label">
                 <h5>
-                  Fixed Cost: ${formatCurrency(selectedAssistance?.fixedCost)}
+                  Fixed Cost: $
+                  {formatDecimalNumber(selectedAssistance?.fixedCost)}
                 </h5>
               </label>
             </div>
@@ -294,7 +296,7 @@ const AssistanceAccordion = () => {
               <label htmlFor="costPerKm" className="form-label">
                 <h5>
                   Cost per Km: $
-                  {formatCurrency(selectedAssistance?.costPerKmAssistance)}
+                  {formatDecimalNumber(selectedAssistance?.costPerKm)}
                 </h5>
               </label>
             </div>
@@ -303,7 +305,7 @@ const AssistanceAccordion = () => {
               <label htmlFor="costPerKm" className="form-label">
                 <h5>
                   Cancellation Cost: $
-                  {formatCurrency(selectedAssistance?.cancellationCost)}
+                  {formatDecimalNumber(selectedAssistance?.cancellationCost)}
                 </h5>
               </label>
             </div>

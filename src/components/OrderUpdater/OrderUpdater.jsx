@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { URIS } from "../../constants";
-import API, { formatCurrency } from "../../services";
-import PopUp from "../PopUp";
+import API, {
+  formatDecimalNumber,
+  formatOrderStatus,
+  formatUserName,
+} from "../../services";
 import Spinner from "../Spinner";
 
 const ORDER_STATUS = {
+  PENDING_APPROVAL: "PENDING_APPROVAL",
   IN_PROGRESS: "IN_PROGRESS",
-  CANCELLED: "CANCELLED",
   COMPLETED: "COMPLETED",
+  CANCELLED: "CANCELLED",
 };
+
+const ORDER_UPDATE_MESSAGE = "Order updated successfully";
 
 const parseNumber = (value) => {
   let numberValue = null;
@@ -28,7 +34,7 @@ const OrderUpdater = () => {
   const [status, setStatus] = useState("");
   const [password, setPassword] = useState("");
   const [formErrors, setFormErrors] = useState("");
-  const [popUpConfirmation, setPopUpConfirmation] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
   const [showWaitingTimeInput, setShowWaitingTimeInput] = useState(false);
   const hhFilterOptions = [
     { value: "00", text: "00" },
@@ -51,15 +57,15 @@ const OrderUpdater = () => {
   const [selectedMmFilterOption, setSelectedMmFilterOption] = useState(
     mmFilterOptions[0].value
   );
-
-  const [kmTraveled, setKmTraveled] = useState(null);
+  const [kmTraveled, setKmTraveled] = useState(0);
   const [showKmTraveled, setShowKmTraveled] = useState(false);
+  const [isOrderClosed, setIsOrderClosed] = useState(false);
 
   const resetUpdateRequestForm = () => {
     setPassword("");
     setSelectedHhFilterOption(hhFilterOptions[0].value);
     setSelectedMmFilterOption(mmFilterOptions[0].value);
-    setKmTraveled(null);
+    setKmTraveled(0);
   };
 
   const handleStatusChange = (value) => {
@@ -69,53 +75,57 @@ const OrderUpdater = () => {
     resetUpdateRequestForm();
   };
 
-  setTimeout(() => {
-    setPopUpConfirmation(false);
-  }, 10000);
+  const isClosed = (order) => {
+    return (
+      order.status === ORDER_STATUS.COMPLETED ||
+      order.status === ORDER_STATUS.CANCELLED
+    );
+  };
 
   const requestUpdateOrder = (event) => {
     event.preventDefault();
-    setPopUpConfirmation(false);
+    setSuccessMsg("");
     setFormErrors("");
 
-    API.getOrder(orderId)
-      .then((responseOrder) => {
-        API.getUser(responseOrder.data.user.id)
-          .then((responseUser) => {
-            API.updateAssistanceOrder(orderId, status, kmTraveled, password)
-              .then((_response) => {
-                setPopUpConfirmation(true);
-                switch (status) {
-                  case ORDER_STATUS.IN_PROGRESS:
-                    window.location.href = `mailto:${responseUser.data.emailAddress}?subject=Order%20${orderId}%20accepted%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20accepted.%20Please%20wait%20in%20the%20place%20until%20it%20arrives.%0AApproximate%20waiting%20time%3A%20${selectedHhFilterOption}:${selectedMmFilterOption}%20hs%0A%0AGreetings.%0A%0AGAV`;
-                    break;
-                  case ORDER_STATUS.CANCELLED:
-                    window.location.href = `mailto:${responseUser.data.emailAddress}?subject=Order%20${orderId}%20cancelled%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20cancelled%20by%20the%20assistant.%0A%0AGreetings.%0A%0AGAV`;
-                    break;
-                  default:
-                }
-                resetUpdateRequestForm();
-              })
-              .catch((error) => {
-                setPopUpConfirmation(false);
-                setFormErrors(error.response.data.message);
-              });
-          })
-          .catch((error) => {
-            setPopUpConfirmation(false);
-            setFormErrors(error.response.data.message);
-          });
+    API.updateOrder(orderId, status, kmTraveled, password)
+      .then((response) => {
+        let order = response.data;
+        setOrder(order);
+        setStatus(order.status);
+        setKmTraveled(formatDecimalNumber(order.kmTraveled));
+        setIsOrderClosed(isClosed(order));
+        setShowWaitingTimeInput(order.status === ORDER_STATUS.IN_PROGRESS);
+        setShowKmTraveled(order.status === ORDER_STATUS.COMPLETED);
+        setSuccessMsg(ORDER_UPDATE_MESSAGE);
+        switch (status) {
+          case ORDER_STATUS.IN_PROGRESS:
+            window.location.href = `mailto:${order.user.emailAddress}?subject=Order%20${orderId}%20accepted%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20accepted.%20Please%20wait%20in%20the%20place%20until%20it%20arrives.%0AApproximate%20waiting%20time%3A%20${selectedHhFilterOption}:${selectedMmFilterOption}%20hs%0A%0AGreetings.%0A%0AGAV`;
+            break;
+          case ORDER_STATUS.CANCELLED:
+            window.location.href = `mailto:${order.user.emailAddress}?subject=Order%20${orderId}%20cancelled%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20cancelled%20by%20the%20assistant.%0A%0AGreetings.%0A%0AGAV`;
+            break;
+          default:
+        }
       })
       .catch((error) => {
-        setPopUpConfirmation(false);
+        setSuccessMsg("");
         setFormErrors(error.response.data.message);
+      })
+      .finally(() => {
+        setPassword("");
       });
   };
 
   useEffect(() => {
     API.getOrder(orderId)
       .then((response) => {
-        setOrder(response.data);
+        let order = response.data;
+        setOrder(order);
+        setStatus(order.status);
+        setKmTraveled(formatDecimalNumber(order.kmTraveled));
+        setIsOrderClosed(isClosed(order));
+        setShowWaitingTimeInput(order.status === ORDER_STATUS.IN_PROGRESS);
+        setShowKmTraveled(order.status === ORDER_STATUS.COMPLETED);
       })
       .catch((error) => {
         setError(true);
@@ -126,7 +136,7 @@ const OrderUpdater = () => {
   }, [orderId]);
 
   const renderTitle = () => (
-    <div className="row">
+    <div className="row mb-3">
       <h1 className="important-title">Order Updater</h1>
     </div>
   );
@@ -143,180 +153,279 @@ const OrderUpdater = () => {
   }
 
   return (
-    <div className="container">
+    <div className="container py-4">
       {renderTitle()}
 
-      {formErrors && (
-        <div className="row">
+      <div className="row">
+        {formErrors && (
           <div className="alert alert-danger text-center" role="alert">
             {formErrors}
           </div>
-        </div>
-      )}
+        )}
 
-      <div className="row d-flex justify-content-center">
-        <form className="formOrder" onSubmit={requestUpdateOrder}>
-          {popUpConfirmation && (
-            <PopUp role="alert" text="Order updated successfully" />
-          )}
+        {successMsg && (
+          <div className="alert alert-success text-center" role="alert">
+            {successMsg}
+          </div>
+        )}
+      </div>
 
-          <div className="mb-3 row">
-            <label htmlFor="orderId" className="col-sm-2 col-form-label">
-              Order Id
+      <form className="row" onSubmit={requestUpdateOrder}>
+        <fieldset className="row g-2">
+          <legend>User: {formatUserName(order.user)}</legend>
+
+          <div className="col-md-12">
+            <label htmlFor="phoneNumber" className="form-label">
+              Phone Number
             </label>
-            <div className="col-sm-10">
+            <input
+              type="text"
+              className="form-control"
+              id="phoneNumber"
+              required={true}
+              value={order.phoneNumber}
+              disabled
+              readOnly
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label htmlFor="street" className="form-label">
+              Street
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="street"
+              required={true}
+              value={order.street}
+              disabled
+              readOnly
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label htmlFor="betweenStreets" className="form-label">
+              Between Streets
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="betweenStreets"
+              required={true}
+              value={order.betweenStreets}
+              disabled
+              readOnly
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label htmlFor="city" className="form-label">
+              City
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="city"
+              required={true}
+              value={order.city}
+              disabled
+              readOnly
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label htmlFor="province" className="form-label">
+              Province
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="province"
+              required={true}
+              value={order.province}
+              disabled
+              readOnly
+            />
+          </div>
+        </fieldset>
+
+        <fieldset className="row g-2">
+          <legend>Assistance: {formatUserName(order.assistance.user)}</legend>
+
+          <div className="col-md-4">
+            <label htmlFor="costPerKm" className="form-label">
+              Cost Per Km
+            </label>
+            <div className="input-group">
+              <span className="input-group-text">$</span>
               <input
                 type="text"
                 className="form-control"
-                id="orderId"
+                id="costPerKm"
                 required={true}
-                value={orderId}
+                value={formatDecimalNumber(order.costPerKm)}
                 disabled
                 readOnly
               />
             </div>
           </div>
 
-          <div className="mb-3 row">
-            <label
-              htmlFor="cancellationCost"
-              className="col-sm-2 col-form-label"
-            >
-              Cancellation Cost
+          <div className="col-md-4">
+            <label htmlFor="fixedCost" className="form-label">
+              Fixed Cost
             </label>
-            <div className="col-sm-10">
-              <div className="input-group">
-                <span className="input-group-text">$</span>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="cancellationCost"
-                  required={true}
-                  value={formatCurrency(order.cancellationCost)}
-                  disabled
-                  readOnly
-                />
-              </div>
+            <div className="input-group">
+              <span className="input-group-text">$</span>
+              <input
+                type="text"
+                className="form-control"
+                id="fixedCost"
+                required={true}
+                value={formatDecimalNumber(order.fixedCost)}
+                disabled
+                readOnly
+              />
             </div>
           </div>
 
-          <div className="mb-3 row">
-            <label className="col-sm-2 radio-inline control-label">
+          <div className="col-md-4">
+            <label htmlFor="cancellationCost" className="form-label">
+              Cancellation Cost
+            </label>
+            <div className="input-group">
+              <span className="input-group-text">$</span>
+              <input
+                type="text"
+                className="form-control"
+                id="cancellationCost"
+                required={true}
+                value={formatDecimalNumber(order.cancellationCost)}
+                disabled
+                readOnly
+              />
+            </div>
+          </div>
+
+          <div className="col-md-12">
+            <label htmlFor="status" className="form-label">
               Status
             </label>
-            <div className="col-sm-10">
+            <select
+              name="status"
+              id="status"
+              className="form-select"
+              value={ORDER_STATUS[status]}
+              onChange={(e) => handleStatusChange(e.target.value)}
+              disabled={isOrderClosed}
+            >
               {Object.keys(ORDER_STATUS).map((value, index) => {
-                const elementId = `radio-${index}`;
                 return (
-                  <div className="form-check form-check-inline" key={index}>
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      name="order-status"
-                      id={elementId}
-                      required={true}
-                      value={value}
-                      onChange={() => handleStatusChange(value)}
-                    />
-                    <label
-                      className="form-check-label capitalize"
-                      htmlFor={elementId}
-                    >
-                      {ORDER_STATUS[value].replaceAll("_", " ")}
-                    </label>
-                  </div>
+                  <option value={value} key={index}>
+                    {formatOrderStatus(value)}
+                  </option>
                 );
               })}
-            </div>
+            </select>
           </div>
 
           {showWaitingTimeInput && (
-            <div className="mb-3 row">
-              <label className="col-sm-2 col-form-label">
-                Approximate waiting time
-              </label>
-              <div className="col-sm-5">
-                <label className="form-label" htmlFor="imputHH">
-                  Hours
-                </label>
-                <select
-                  id="inputHH"
-                  className="form-select form-select"
-                  aria-label="Hours"
-                  value={selectedHhFilterOption}
-                  onChange={(e) => setSelectedHhFilterOption(e.target.value)}
-                >
-                  {hhFilterOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.text}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-sm-5">
-                <label className="form-label" htmlFor="imputMM">
-                  Minutes
-                </label>
-                <select
-                  id="imputMM"
-                  className="form-select form-select"
-                  aria-label="Minutes"
-                  value={selectedMmFilterOption}
-                  onChange={(e) => setSelectedMmFilterOption(e.target.value)}
-                >
-                  {mmFilterOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.text}
-                    </option>
-                  ))}
-                </select>
+            <div className="col-md-12">
+              <label className="form-label">Approximate Waiting Time</label>
+              <div className="row g-2">
+                <div className="col-sm-6">
+                  <label className="form-label" htmlFor="imputHH">
+                    Hours
+                  </label>
+                  <select
+                    id="inputHH"
+                    className="form-select form-select"
+                    aria-label="Hours"
+                    value={selectedHhFilterOption}
+                    onChange={(e) => setSelectedHhFilterOption(e.target.value)}
+                  >
+                    {hhFilterOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.text}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="col-sm-6">
+                  <label className="form-label" htmlFor="imputMM">
+                    Minutes
+                  </label>
+                  <select
+                    id="imputMM"
+                    className="form-select form-select"
+                    aria-label="Minutes"
+                    value={selectedMmFilterOption}
+                    onChange={(e) => setSelectedMmFilterOption(e.target.value)}
+                  >
+                    {mmFilterOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.text}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
           )}
 
           {showKmTraveled && (
-            <div className="mb-3 row">
-              <label className="col-sm-2 col-form-label">Km traveled</label>
-              <div className="col-sm-5">
-                <input
-                  type="number"
-                  min={0}
-                  className="form-control"
-                  id="kmTraveled"
-                  required={true}
-                  value={kmTraveled ?? ""}
-                  onChange={(e) => setKmTraveled(parseNumber(e.target.value))}
-                />
-              </div>
+            <div className="col-md-6">
+              <label htmlFor="cancellationCost" className="form-label">
+                Traveled Kilometers
+              </label>
+              <input
+                type="number"
+                min={0.0}
+                step={0.01}
+                presicion={2}
+                className="form-control"
+                id="kmTraveled"
+                required={true}
+                value={kmTraveled}
+                onChange={(e) => setKmTraveled(parseNumber(e.target.value))}
+                disabled={order.status === ORDER_STATUS.COMPLETED}
+              />
             </div>
           )}
 
-          <div className="mb-3 row">
-            <label htmlFor="inputPassword" className="col-sm-2 col-form-label">
+          <div className="col-md-12">
+            <label htmlFor="inputPassword" className="form-label">
               Password
             </label>
-            <div className="col-sm-10">
-              <input
-                type="password"
-                minLength="7"
-                maxLength="7"
-                className="form-control"
-                id="inputPassword"
-                required={true}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+            <input
+              type="password"
+              minLength="7"
+              maxLength="7"
+              className="form-control"
+              id="inputPassword"
+              required={true}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={isOrderClosed}
+            />
           </div>
+        </fieldset>
 
-          <Link className="btn btn-secondary me-3" to={`${URIS.ORDERS}`}>
-            Go Back
-          </Link>
-          <button className="btn btn-primary" type="submit">
-            Update
-          </button>
-        </form>
-      </div>
+        <fieldset className="row g-2">
+          <div>
+            <Link className="btn btn-secondary me-3" to={`${URIS.ORDERS}`}>
+              Go Back
+            </Link>
+            <button
+              className="btn btn-primary"
+              type="submit"
+              disabled={isOrderClosed}
+            >
+              Update
+            </button>
+          </div>
+        </fieldset>
+      </form>
     </div>
   );
 };

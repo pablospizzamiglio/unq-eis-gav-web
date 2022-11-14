@@ -21,7 +21,7 @@ const API = {
       emailAddress,
       telephoneNumber,
     }),
-  createAssistanceOrder: (
+  createOrder: (
     assistanceId,
     street,
     betweenStreets,
@@ -39,7 +39,7 @@ const API = {
       phoneNumber,
       userId,
     }),
-  updateAssistanceOrder: (orderId, status, kmTraveled, password) =>
+  updateOrder: (orderId, status, kmTraveled, password) =>
     axios.put(`${baseURL}/orders`, {
       orderId,
       status,
@@ -56,7 +56,7 @@ const API = {
       return axios.get(`${baseURL}/orders?status=${status.join(",")}`);
     }
   },
-  updateScoreAssistance: (orderId, userId, score) =>
+  updateOrderScore: (orderId, userId, score) =>
     axios.put(`${baseURL}/score`, {
       orderId,
       userId,
