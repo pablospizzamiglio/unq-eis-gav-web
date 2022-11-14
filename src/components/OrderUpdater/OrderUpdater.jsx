@@ -86,7 +86,8 @@ const OrderUpdater = () => {
           .then((responseUser) => {
             API.updateOrder(orderId, status, kmTraveled, password)
               .then((response) => {
-                setOrder(response.data);
+                let order = response.data;
+                setOrder(order);
                 setStatus(order.status);
                 setShowWaitingTimeInput(
                   order.status === ORDER_STATUS.IN_PROGRESS
