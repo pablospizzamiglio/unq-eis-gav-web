@@ -10,7 +10,7 @@ import Spinner from "../Spinner";
 
 const ORDER_SCORED_SUCCESSFULY = "Order scored successfully";
 
-const AssistanceScore = () => {
+const OrderScore = () => {
   const { orderId } = useParams();
   const [order, setOrder] = useState(null);
   const [userId, setUserId] = useState("");
@@ -21,12 +21,7 @@ const AssistanceScore = () => {
   const [successMsg, setSuccessMsg] = useState("");
   const [isFormDisabled, setIsFormDisabled] = useState(false);
 
-  const resetUpdateRequestForm = () => {
-    setUserId("");
-    setScore("");
-  };
-
-  const requestQualificationAssistant = (event) => {
+  const requestOrderScore = (event) => {
     event.preventDefault();
     setSuccessMsg("");
     setFormErrors("");
@@ -37,7 +32,6 @@ const AssistanceScore = () => {
         setScore(order.score);
         setIsFormDisabled(order.score > 0);
         setSuccessMsg(ORDER_SCORED_SUCCESSFULY);
-        resetUpdateRequestForm();
       })
       .catch((error) => {
         setFormErrors(error.response.data.message);
@@ -95,7 +89,7 @@ const AssistanceScore = () => {
         )}
       </div>
 
-      <form className="row" onSubmit={requestQualificationAssistant}>
+      <form className="row" onSubmit={requestOrderScore}>
         <fieldset className="row g-2">
           <legend>User: {formatUserName(order.user)}</legend>
 
@@ -335,4 +329,4 @@ const AssistanceScore = () => {
   );
 };
 
-export default AssistanceScore;
+export default OrderScore;

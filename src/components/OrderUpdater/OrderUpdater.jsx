@@ -100,15 +100,9 @@ const OrderUpdater = () => {
         switch (status) {
           case ORDER_STATUS.IN_PROGRESS:
             window.location.href = `mailto:${order.user.emailAddress}?subject=Order%20${orderId}%20accepted%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20accepted.%20Please%20wait%20in%20the%20place%20until%20it%20arrives.%0AApproximate%20waiting%20time%3A%20${selectedHhFilterOption}:${selectedMmFilterOption}%20hs%0A%0AGreetings.%0A%0AGAV`;
-            console.log(
-              `mailto:${order.user.emailAddress}?subject=Order%20${orderId}%20accepted%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20accepted.%20Please%20wait%20in%20the%20place%20until%20it%20arrives.%0AApproximate%20waiting%20time%3A%20${selectedHhFilterOption}:${selectedMmFilterOption}%20hs%0A%0AGreetings.%0A%0AGAV`
-            );
             break;
           case ORDER_STATUS.CANCELLED:
             window.location.href = `mailto:${order.user.emailAddress}?subject=Order%20${orderId}%20cancelled%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20cancelled%20by%20the%20assistant.%0A%0AGreetings.%0A%0AGAV`;
-            console.log(
-              `mailto:${order.user.emailAddress}?subject=Order%20${orderId}%20cancelled%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20cancelled%20by%20the%20assistant.%0A%0AGreetings.%0A%0AGAV`
-            );
             break;
           default:
         }
