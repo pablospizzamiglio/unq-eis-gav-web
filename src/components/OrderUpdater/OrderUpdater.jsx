@@ -57,15 +57,15 @@ const OrderUpdater = () => {
   const [selectedMmFilterOption, setSelectedMmFilterOption] = useState(
     mmFilterOptions[0].value
   );
-
-  const [kmTraveled, setKmTraveled] = useState(formatDecimalNumber(0));
+  const [kmTraveled, setKmTraveled] = useState(0);
   const [showKmTraveled, setShowKmTraveled] = useState(false);
+  const [isOrderClosed, setIsOrderClosed] = useState(false);
 
   const resetUpdateRequestForm = () => {
     setPassword("");
     setSelectedHhFilterOption(hhFilterOptions[0].value);
     setSelectedMmFilterOption(mmFilterOptions[0].value);
-    setKmTraveled(formatDecimalNumber(0));
+    setKmTraveled(0);
   };
 
   const handleStatusChange = (value) => {
@@ -75,50 +75,50 @@ const OrderUpdater = () => {
     resetUpdateRequestForm();
   };
 
+  const isClosed = (order) => {
+    return (
+      order.status === ORDER_STATUS.COMPLETED ||
+      order.status === ORDER_STATUS.CANCELLED
+    );
+  };
+
   const requestUpdateOrder = (event) => {
     event.preventDefault();
     setSuccessMsg("");
     setFormErrors("");
 
-    API.getOrder(orderId)
-      .then((responseOrder) => {
-        API.getUser(responseOrder.data.user.id)
-          .then((responseUser) => {
-            API.updateOrder(orderId, status, kmTraveled, password)
-              .then((response) => {
-                let order = response.data;
-                setOrder(order);
-                setStatus(order.status);
-                setShowWaitingTimeInput(
-                  order.status === ORDER_STATUS.IN_PROGRESS
-                );
-                setShowKmTraveled(order.status === ORDER_STATUS.COMPLETED);
-                setKmTraveled(formatDecimalNumber(order.kmTraveled));
-                setSuccessMsg(ORDER_UPDATE_MESSAGE);
-                switch (status) {
-                  case ORDER_STATUS.IN_PROGRESS:
-                    window.location.href = `mailto:${responseUser.data.emailAddress}?subject=Order%20${orderId}%20accepted%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20accepted.%20Please%20wait%20in%20the%20place%20until%20it%20arrives.%0AApproximate%20waiting%20time%3A%20${selectedHhFilterOption}:${selectedMmFilterOption}%20hs%0A%0AGreetings.%0A%0AGAV`;
-                    break;
-                  case ORDER_STATUS.CANCELLED:
-                    window.location.href = `mailto:${responseUser.data.emailAddress}?subject=Order%20${orderId}%20cancelled%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20cancelled%20by%20the%20assistant.%0A%0AGreetings.%0A%0AGAV`;
-                    break;
-                  default:
-                }
-                resetUpdateRequestForm();
-              })
-              .catch((error) => {
-                setSuccessMsg("");
-                setFormErrors(error.response.data.message);
-              });
-          })
-          .catch((error) => {
-            setSuccessMsg("");
-            setFormErrors(error.response.data.message);
-          });
+    API.updateOrder(orderId, status, kmTraveled, password)
+      .then((response) => {
+        let order = response.data;
+        setOrder(order);
+        setStatus(order.status);
+        setKmTraveled(formatDecimalNumber(order.kmTraveled));
+        setIsOrderClosed(isClosed(order));
+        setShowWaitingTimeInput(order.status === ORDER_STATUS.IN_PROGRESS);
+        setShowKmTraveled(order.status === ORDER_STATUS.COMPLETED);
+        setSuccessMsg(ORDER_UPDATE_MESSAGE);
+        switch (status) {
+          case ORDER_STATUS.IN_PROGRESS:
+            window.location.href = `mailto:${order.user.emailAddress}?subject=Order%20${orderId}%20accepted%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20accepted.%20Please%20wait%20in%20the%20place%20until%20it%20arrives.%0AApproximate%20waiting%20time%3A%20${selectedHhFilterOption}:${selectedMmFilterOption}%20hs%0A%0AGreetings.%0A%0AGAV`;
+            console.log(
+              `mailto:${order.user.emailAddress}?subject=Order%20${orderId}%20accepted%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20accepted.%20Please%20wait%20in%20the%20place%20until%20it%20arrives.%0AApproximate%20waiting%20time%3A%20${selectedHhFilterOption}:${selectedMmFilterOption}%20hs%0A%0AGreetings.%0A%0AGAV`
+            );
+            break;
+          case ORDER_STATUS.CANCELLED:
+            window.location.href = `mailto:${order.user.emailAddress}?subject=Order%20${orderId}%20cancelled%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20cancelled%20by%20the%20assistant.%0A%0AGreetings.%0A%0AGAV`;
+            console.log(
+              `mailto:${order.user.emailAddress}?subject=Order%20${orderId}%20cancelled%20by%20the%20ssistant&body=Dear%20user%3A%0AWe%20inform%20you%20that%20your%20request%20for%20assistance%20has%20been%20cancelled%20by%20the%20assistant.%0A%0AGreetings.%0A%0AGAV`
+            );
+            break;
+          default:
+        }
       })
       .catch((error) => {
         setSuccessMsg("");
         setFormErrors(error.response.data.message);
+      })
+      .finally(() => {
+        setPassword("");
       });
   };
 
@@ -128,9 +128,10 @@ const OrderUpdater = () => {
         let order = response.data;
         setOrder(order);
         setStatus(order.status);
+        setKmTraveled(formatDecimalNumber(order.kmTraveled));
+        setIsOrderClosed(isClosed(order));
         setShowWaitingTimeInput(order.status === ORDER_STATUS.IN_PROGRESS);
         setShowKmTraveled(order.status === ORDER_STATUS.COMPLETED);
-        setKmTraveled(formatDecimalNumber(order.kmTraveled));
       })
       .catch((error) => {
         setError(true);
@@ -156,13 +157,6 @@ const OrderUpdater = () => {
       </>
     );
   }
-
-  const isClosed = (order) => {
-    return (
-      order.status === ORDER_STATUS.COMPLETED ||
-      order.status === ORDER_STATUS.CANCELLED
-    );
-  };
 
   return (
     <div className="container py-4">
@@ -329,7 +323,7 @@ const OrderUpdater = () => {
               className="form-select"
               value={ORDER_STATUS[status]}
               onChange={(e) => handleStatusChange(e.target.value)}
-              disabled={isClosed(order)}
+              disabled={isOrderClosed}
             >
               {Object.keys(ORDER_STATUS).map((value, index) => {
                 return (
@@ -400,7 +394,6 @@ const OrderUpdater = () => {
                 required={true}
                 value={kmTraveled}
                 onChange={(e) => setKmTraveled(parseNumber(e.target.value))}
-                onBlur={(e) => setKmTraveled(formatDecimalNumber(kmTraveled))}
                 disabled={order.status === ORDER_STATUS.COMPLETED}
               />
             </div>
@@ -419,7 +412,7 @@ const OrderUpdater = () => {
               required={true}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              disabled={isClosed(order)}
+              disabled={isOrderClosed}
             />
           </div>
         </fieldset>
@@ -432,7 +425,7 @@ const OrderUpdater = () => {
             <button
               className="btn btn-primary"
               type="submit"
-              disabled={isClosed(order)}
+              disabled={isOrderClosed}
             >
               Update
             </button>
