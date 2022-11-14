@@ -208,7 +208,12 @@ const AssistanceAccordion = () => {
                       data-bs-target={`#collapse${i}`}
                       aria-expanded="false"
                       aria-controls={`collapse${i}`}
-                    ></button>
+                    >
+                      <h4>
+                        {formatUserName(assistance.assistant)}{" "}
+                        <i className="bi bi-star-fill"></i> {assistance.score}/5
+                      </h4>
+                    </button>
                   </h2>
                   <div
                     id={`collapse${i}`}
@@ -229,7 +234,7 @@ const AssistanceAccordion = () => {
                         Cancellation Cost: $
                         {formatCurrency(assistance.cancellationCost)}
                       </h4>
-                      <h4>User: {formatUserName(assistance.assistant)}</h4>
+
                       <button
                         type="button"
                         className="btn btn-primary"
