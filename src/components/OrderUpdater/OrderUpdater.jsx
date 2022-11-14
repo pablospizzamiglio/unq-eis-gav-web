@@ -58,14 +58,14 @@ const OrderUpdater = () => {
     mmFilterOptions[0].value
   );
 
-  const [kmTraveled, setKmTraveled] = useState(null);
+  const [kmTraveled, setKmTraveled] = useState(formatDecimalNumber(0));
   const [showKmTraveled, setShowKmTraveled] = useState(false);
 
   const resetUpdateRequestForm = () => {
     setPassword("");
     setSelectedHhFilterOption(hhFilterOptions[0].value);
     setSelectedMmFilterOption(mmFilterOptions[0].value);
-    setKmTraveled(null);
+    setKmTraveled(formatDecimalNumber(0));
   };
 
   const handleStatusChange = (value) => {
@@ -84,8 +84,15 @@ const OrderUpdater = () => {
       .then((responseOrder) => {
         API.getUser(responseOrder.data.user.id)
           .then((responseUser) => {
-            API.updateAssistanceOrder(orderId, status, kmTraveled, password)
-              .then((_response) => {
+            API.updateOrder(orderId, status, kmTraveled, password)
+              .then((response) => {
+                setOrder(response.data);
+                setStatus(order.status);
+                setShowWaitingTimeInput(
+                  order.status === ORDER_STATUS.IN_PROGRESS
+                );
+                setShowKmTraveled(order.status === ORDER_STATUS.COMPLETED);
+                setKmTraveled(formatDecimalNumber(order.kmTraveled));
                 setSuccessMsg(ORDER_UPDATE_MESSAGE);
                 switch (status) {
                   case ORDER_STATUS.IN_PROGRESS:
@@ -122,7 +129,7 @@ const OrderUpdater = () => {
         setStatus(order.status);
         setShowWaitingTimeInput(order.status === ORDER_STATUS.IN_PROGRESS);
         setShowKmTraveled(order.status === ORDER_STATUS.COMPLETED);
-        setKmTraveled(order.kmTraveled);
+        setKmTraveled(formatDecimalNumber(order.kmTraveled));
       })
       .catch((error) => {
         setError(true);
@@ -384,13 +391,15 @@ const OrderUpdater = () => {
               </label>
               <input
                 type="number"
-                min={0}
+                min={0.0}
                 step={0.01}
+                presicion={2}
                 className="form-control"
                 id="kmTraveled"
                 required={true}
-                value={formatDecimalNumber(kmTraveled)}
+                value={kmTraveled}
                 onChange={(e) => setKmTraveled(parseNumber(e.target.value))}
+                onBlur={(e) => setKmTraveled(formatDecimalNumber(kmTraveled))}
                 disabled={order.status === ORDER_STATUS.COMPLETED}
               />
             </div>

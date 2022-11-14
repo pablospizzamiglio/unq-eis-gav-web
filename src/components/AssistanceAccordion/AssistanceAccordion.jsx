@@ -83,7 +83,7 @@ const AssistanceAccordion = () => {
     if (!isBlockedNewUser) {
       API.createUser(firstName, lastName, "CLIENT", email, phoneNumber)
         .then((response) => {
-          API.createAssistanceOrder(
+          API.createOrder(
             selectedAssistance.id,
             street,
             betweenStreets,
@@ -113,7 +113,7 @@ const AssistanceAccordion = () => {
     } else {
       API.getUser(idUser)
         .then((response) => {
-          API.createAssistanceOrder(
+          API.createOrder(
             selectedAssistance.id,
             street,
             betweenStreets,
